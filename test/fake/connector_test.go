@@ -1,7 +1,8 @@
-package fake
+package fake_test
 
 import (
 	. "github.com/ghilbut/ygg.go/common"
+	. "github.com/ghilbut/ygg.go/test/fake"
 	"github.com/ghilbut/ygg.go/test/mock"
 	"github.com/golang/mock/gomock"
 	"testing"
@@ -62,7 +63,7 @@ func Test_close(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockDelegate := mock.NewMockConnectorDelegate(mockCtrl)
-	mockDelegate.EXPECT().OnClosed().Times(2)
+	mockDelegate.EXPECT().OnClosed().Times(4)
 
 	lhs.BindDelegate(mockDelegate)
 	rhs.BindDelegate(mockDelegate)

@@ -52,9 +52,11 @@ func (self *FakeConnector) SendBinary(bytes []byte) {
 }
 
 func (self *FakeConnector) Close() {
+	if d := self.delegate; d != nil {
+		d.OnClosed()
+	}
 	o := self.other
-	d := o.delegate
-	if d != nil {
+	if d := o.delegate; d != nil {
 		d.OnClosed()
 	}
 }
