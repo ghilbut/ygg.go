@@ -1,0 +1,2 @@
+# ygg.go
+test
