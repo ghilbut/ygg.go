@@ -9,6 +9,67 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
+// Mock of Connection interface
+type MockConnection struct {
+	ctrl     *gomock.Controller
+	recorder *_MockConnectionRecorder
+}
+
+// Recorder for MockConnection (not exported)
+type _MockConnectionRecorder struct {
+	mock *MockConnection
+}
+
+func NewMockConnection(ctrl *gomock.Controller) *MockConnection {
+	mock := &MockConnection{ctrl: ctrl}
+	mock.recorder = &_MockConnectionRecorder{mock}
+	return mock
+}
+
+func (_m *MockConnection) EXPECT() *_MockConnectionRecorder {
+	return _m.recorder
+}
+
+func (_m *MockConnection) BindDelegate(delegate ConnectionDelegate) {
+	_m.ctrl.Call(_m, "BindDelegate", delegate)
+}
+
+func (_mr *_MockConnectionRecorder) BindDelegate(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "BindDelegate", arg0)
+}
+
+func (_m *MockConnection) UnbindDelegate() {
+	_m.ctrl.Call(_m, "UnbindDelegate")
+}
+
+func (_mr *_MockConnectionRecorder) UnbindDelegate() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "UnbindDelegate")
+}
+
+func (_m *MockConnection) SendText(text string) {
+	_m.ctrl.Call(_m, "SendText", text)
+}
+
+func (_mr *_MockConnectionRecorder) SendText(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "SendText", arg0)
+}
+
+func (_m *MockConnection) SendBinary(bytes []byte) {
+	_m.ctrl.Call(_m, "SendBinary", bytes)
+}
+
+func (_mr *_MockConnectionRecorder) SendBinary(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "SendBinary", arg0)
+}
+
+func (_m *MockConnection) Close() {
+	_m.ctrl.Call(_m, "Close")
+}
+
+func (_mr *_MockConnectionRecorder) Close() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "Close")
+}
+
 // Mock of ConnectionDelegate interface
 type MockConnectionDelegate struct {
 	ctrl     *gomock.Controller
@@ -30,7 +91,7 @@ func (_m *MockConnectionDelegate) EXPECT() *_MockConnectionDelegateRecorder {
 	return _m.recorder
 }
 
-func (_m *MockConnectionDelegate) OnText(conn *Connection, text string) {
+func (_m *MockConnectionDelegate) OnText(conn Connection, text string) {
 	_m.ctrl.Call(_m, "OnText", conn, text)
 }
 
@@ -38,7 +99,7 @@ func (_mr *_MockConnectionDelegateRecorder) OnText(arg0, arg1 interface{}) *gomo
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnText", arg0, arg1)
 }
 
-func (_m *MockConnectionDelegate) OnBinary(conn *Connection, bytes []byte) {
+func (_m *MockConnectionDelegate) OnBinary(conn Connection, bytes []byte) {
 	_m.ctrl.Call(_m, "OnBinary", conn, bytes)
 }
 
@@ -46,7 +107,7 @@ func (_mr *_MockConnectionDelegateRecorder) OnBinary(arg0, arg1 interface{}) *go
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnBinary", arg0, arg1)
 }
 
-func (_m *MockConnectionDelegate) OnClosed(conn *Connection) {
+func (_m *MockConnectionDelegate) OnClosed(conn Connection) {
 	_m.ctrl.Call(_m, "OnClosed", conn)
 }
 

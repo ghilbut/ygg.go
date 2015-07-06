@@ -16,10 +16,10 @@ fi
 pushd $DIR
 
 echo "\nremove current files."
-rm connector.go
+rm connection.go
 
 echo "\nmake new mock objects."
-mockgen -source ../../common/connector.go -destination connector.go
+mockgen -source ../../common/connection.go -destination connection.go
 
 echo "\nchange package name and import path."
 
