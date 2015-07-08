@@ -85,8 +85,8 @@ func Test_send_text(t *testing.T) {
 
 func Test_recv_text(t *testing.T) {
 
-	desc, _ := NewDesc(kJson)
 	var lhs Connection = NewFakeConnection()
+	desc, _ := NewDesc(kJson)
 	proxy := NewProxy(lhs.(*FakeConnection).Other(), desc)
 
 	mockCtrl := gomock.NewController(t)
