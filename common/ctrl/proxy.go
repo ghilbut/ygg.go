@@ -7,8 +7,8 @@ import (
 type Proxy struct {
 	ConnectionDelegate
 
-	desc     *Desc
 	conn     Connection
+	Desc     *Desc
 	Delegate ProxyDelegate
 }
 
@@ -18,17 +18,17 @@ type ProxyDelegate interface {
 	OnClosed(proxy *Proxy)
 }
 
-func NewProxy(desc *Desc, conn Connection) *Proxy {
-
-	if desc == nil {
-		panic("desc is nil.")
-	}
+func NewProxy(conn Connection, desc *Desc) *Proxy {
 
 	if conn == nil {
 		panic("connection is nil.")
 	}
 
-	proxy := &Proxy{desc: desc, conn: conn}
+	if desc == nil {
+		panic("desc is nil.")
+	}
+
+	proxy := &Proxy{conn: conn, Desc: desc}
 	conn.BindDelegate(proxy)
 
 	return proxy
