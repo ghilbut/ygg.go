@@ -73,7 +73,7 @@ type TargetProxy struct {
 	ConnectionDelegate
 
 	conn     Connection
-	desc     *TargetDesc
+	Desc     *TargetDesc
 	Delegate TargetProxyDelegate
 }
 
@@ -93,7 +93,7 @@ func NewTargetProxy(conn Connection, desc *TargetDesc) *TargetProxy {
 		panic("desc is nil.")
 	}
 
-	proxy := &TargetProxy{conn: conn, desc: desc}
+	proxy := &TargetProxy{conn: conn, Desc: desc}
 	conn.BindDelegate(proxy)
 
 	return proxy
