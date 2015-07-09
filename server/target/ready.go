@@ -1,4 +1,4 @@
-package ctrl
+package target
 
 import (
 	. "github.com/ghilbut/ygg.go/common"

@@ -1,6 +1,13 @@
 package common
 
+type Proxy interface {
+	SendText(text string)
+	SendBinary(bytes []byte)
+	Close()
+}
+
 type CtrlProxy struct {
+	Proxy
 	ConnectionDelegate
 
 	conn     Connection
@@ -9,9 +16,9 @@ type CtrlProxy struct {
 }
 
 type CtrlProxyDelegate interface {
-	OnText(proxy *CtrlProxy, text string)
-	OnBinary(proxy *CtrlProxy, bytes []byte)
-	OnClosed(proxy *CtrlProxy)
+	OnCtrlText(proxy *CtrlProxy, text string)
+	OnCtrlBinary(proxy *CtrlProxy, bytes []byte)
+	OnCtrlClosed(proxy *CtrlProxy)
 }
 
 func NewCtrlProxy(conn Connection, desc *CtrlDesc) *CtrlProxy {
@@ -47,7 +54,7 @@ func (self *CtrlProxy) OnText(conn Connection, text string) {
 		panic("conn is invalid connection.")
 	}
 	if d := self.Delegate; d != nil {
-		d.OnText(self, text)
+		d.OnCtrlText(self, text)
 	}
 }
 
@@ -56,7 +63,7 @@ func (self *CtrlProxy) OnBinary(conn Connection, bytes []byte) {
 		panic("conn is invalid connection.")
 	}
 	if d := self.Delegate; d != nil {
-		d.OnBinary(self, bytes)
+		d.OnCtrlBinary(self, bytes)
 	}
 }
 
@@ -65,11 +72,12 @@ func (self *CtrlProxy) OnClosed(conn Connection) {
 		panic("conn is invalid connection.")
 	}
 	if d := self.Delegate; d != nil {
-		d.OnClosed(self)
+		d.OnCtrlClosed(self)
 	}
 }
 
 type TargetProxy struct {
+	Proxy
 	ConnectionDelegate
 
 	conn     Connection
@@ -78,9 +86,9 @@ type TargetProxy struct {
 }
 
 type TargetProxyDelegate interface {
-	OnText(proxy *TargetProxy, text string)
-	OnBinary(proxy *TargetProxy, bytes []byte)
-	OnClosed(proxy *TargetProxy)
+	OnTargetText(proxy *TargetProxy, text string)
+	OnTargetBinary(proxy *TargetProxy, bytes []byte)
+	OnTargetClosed(proxy *TargetProxy)
 }
 
 func NewTargetProxy(conn Connection, desc *TargetDesc) *TargetProxy {
@@ -116,7 +124,7 @@ func (self *TargetProxy) OnText(conn Connection, text string) {
 		panic("conn is invalid connection.")
 	}
 	if d := self.Delegate; d != nil {
-		d.OnText(self, text)
+		d.OnTargetText(self, text)
 	}
 }
 
@@ -125,7 +133,7 @@ func (self *TargetProxy) OnBinary(conn Connection, bytes []byte) {
 		panic("conn is invalid connection.")
 	}
 	if d := self.Delegate; d != nil {
-		d.OnBinary(self, bytes)
+		d.OnTargetBinary(self, bytes)
 	}
 }
 
@@ -134,6 +142,6 @@ func (self *TargetProxy) OnClosed(conn Connection) {
 		panic("conn is invalid connection.")
 	}
 	if d := self.Delegate; d != nil {
-		d.OnClosed(self)
+		d.OnTargetClosed(self)
 	}
 }

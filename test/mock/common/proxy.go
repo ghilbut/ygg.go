@@ -30,28 +30,28 @@ func (_m *MockCtrlProxyDelegate) EXPECT() *_MockCtrlProxyDelegateRecorder {
 	return _m.recorder
 }
 
-func (_m *MockCtrlProxyDelegate) OnText(proxy *CtrlProxy, text string) {
-	_m.ctrl.Call(_m, "OnText", proxy, text)
+func (_m *MockCtrlProxyDelegate) OnCtrlText(proxy *CtrlProxy, text string) {
+	_m.ctrl.Call(_m, "OnCtrlText", proxy, text)
 }
 
-func (_mr *_MockCtrlProxyDelegateRecorder) OnText(arg0, arg1 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnText", arg0, arg1)
+func (_mr *_MockCtrlProxyDelegateRecorder) OnCtrlText(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnCtrlText", arg0, arg1)
 }
 
-func (_m *MockCtrlProxyDelegate) OnBinary(proxy *CtrlProxy, bytes []byte) {
-	_m.ctrl.Call(_m, "OnBinary", proxy, bytes)
+func (_m *MockCtrlProxyDelegate) OnCtrlBinary(proxy *CtrlProxy, bytes []byte) {
+	_m.ctrl.Call(_m, "OnCtrlBinary", proxy, bytes)
 }
 
-func (_mr *_MockCtrlProxyDelegateRecorder) OnBinary(arg0, arg1 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnBinary", arg0, arg1)
+func (_mr *_MockCtrlProxyDelegateRecorder) OnCtrlBinary(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnCtrlBinary", arg0, arg1)
 }
 
-func (_m *MockCtrlProxyDelegate) OnClosed(proxy *CtrlProxy) {
-	_m.ctrl.Call(_m, "OnClosed", proxy)
+func (_m *MockCtrlProxyDelegate) OnCtrlClosed(proxy *CtrlProxy) {
+	_m.ctrl.Call(_m, "OnCtrlClosed", proxy)
 }
 
-func (_mr *_MockCtrlProxyDelegateRecorder) OnClosed(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnClosed", arg0)
+func (_mr *_MockCtrlProxyDelegateRecorder) OnCtrlClosed(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnCtrlClosed", arg0)
 }
 
 // Mock of TargetProxyDelegate interface
@@ -75,26 +75,26 @@ func (_m *MockTargetProxyDelegate) EXPECT() *_MockTargetProxyDelegateRecorder {
 	return _m.recorder
 }
 
-func (_m *MockTargetProxyDelegate) OnText(proxy *TargetProxy, text string) {
-	_m.ctrl.Call(_m, "OnText", proxy, text)
+func (_m *MockTargetProxyDelegate) OnTargetText(proxy *TargetProxy, text string) {
+	_m.ctrl.Call(_m, "OnTargetText", proxy, text)
 }
 
-func (_mr *_MockTargetProxyDelegateRecorder) OnText(arg0, arg1 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnText", arg0, arg1)
+func (_mr *_MockTargetProxyDelegateRecorder) OnTargetText(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnTargetText", arg0, arg1)
 }
 
-func (_m *MockTargetProxyDelegate) OnBinary(proxy *TargetProxy, bytes []byte) {
-	_m.ctrl.Call(_m, "OnBinary", proxy, bytes)
+func (_m *MockTargetProxyDelegate) OnTargetBinary(proxy *TargetProxy, bytes []byte) {
+	_m.ctrl.Call(_m, "OnTargetBinary", proxy, bytes)
 }
 
-func (_mr *_MockTargetProxyDelegateRecorder) OnBinary(arg0, arg1 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnBinary", arg0, arg1)
+func (_mr *_MockTargetProxyDelegateRecorder) OnTargetBinary(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnTargetBinary", arg0, arg1)
 }
 
-func (_m *MockTargetProxyDelegate) OnClosed(proxy *TargetProxy) {
-	_m.ctrl.Call(_m, "OnClosed", proxy)
+func (_m *MockTargetProxyDelegate) OnTargetClosed(proxy *TargetProxy) {
+	_m.ctrl.Call(_m, "OnTargetClosed", proxy)
 }
 
-func (_mr *_MockTargetProxyDelegateRecorder) OnClosed(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnClosed", arg0)
+func (_mr *_MockTargetProxyDelegateRecorder) OnTargetClosed(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnTargetClosed", arg0)
 }

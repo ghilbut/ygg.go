@@ -91,7 +91,7 @@ func Test_CtrlProxy_recv_text(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockDelegate := NewMockCtrlProxyDelegate(mockCtrl)
-	mockDelegate.EXPECT().OnText(proxy, "A").Times(2)
+	mockDelegate.EXPECT().OnCtrlText(proxy, "A").Times(2)
 
 	proxy.Delegate = mockDelegate
 	lhs.SendText("A")
@@ -146,7 +146,7 @@ func Test_CtrlProxy_recv_binary(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockDelegate := NewMockCtrlProxyDelegate(mockCtrl)
-	mockDelegate.EXPECT().OnBinary(proxy, []byte{0x01, 0x02}).Times(2)
+	mockDelegate.EXPECT().OnCtrlBinary(proxy, []byte{0x01, 0x02}).Times(2)
 
 	proxy.Delegate = mockDelegate
 	lhs.SendBinary([]byte{0x01, 0x02})
@@ -201,7 +201,7 @@ func Test_CtrlProxy_closed(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockDelegate := NewMockCtrlProxyDelegate(mockCtrl)
-	mockDelegate.EXPECT().OnClosed(proxy).Times(2)
+	mockDelegate.EXPECT().OnCtrlClosed(proxy).Times(2)
 
 	proxy.Delegate = mockDelegate
 	lhs.Close()
@@ -311,7 +311,7 @@ func Test_TargetProxy_recv_text(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockDelegate := NewMockTargetProxyDelegate(mockCtrl)
-	mockDelegate.EXPECT().OnText(proxy, "A").Times(2)
+	mockDelegate.EXPECT().OnTargetText(proxy, "A").Times(2)
 
 	proxy.Delegate = mockDelegate
 	lhs.SendText("A")
@@ -366,7 +366,7 @@ func Test_TargetProxy_recv_binary(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockDelegate := NewMockTargetProxyDelegate(mockCtrl)
-	mockDelegate.EXPECT().OnBinary(proxy, []byte{0x01, 0x02}).Times(2)
+	mockDelegate.EXPECT().OnTargetBinary(proxy, []byte{0x01, 0x02}).Times(2)
 
 	proxy.Delegate = mockDelegate
 	lhs.SendBinary([]byte{0x01, 0x02})
@@ -421,7 +421,7 @@ func Test_TargetProxy_closed(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockDelegate := NewMockTargetProxyDelegate(mockCtrl)
-	mockDelegate.EXPECT().OnClosed(proxy).Times(2)
+	mockDelegate.EXPECT().OnTargetClosed(proxy).Times(2)
 
 	proxy.Delegate = mockDelegate
 	lhs.Close()
