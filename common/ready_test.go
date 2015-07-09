@@ -1,8 +1,7 @@
-package ctrl_test
+package common_test
 
 import (
 	. "github.com/ghilbut/ygg.go/common"
-	. "github.com/ghilbut/ygg.go/common/ctrl"
 	. "github.com/ghilbut/ygg.go/test/fake"
 	"testing"
 )
@@ -13,7 +12,7 @@ func Test_has_connection_after_set_connection(t *testing.T) {
 
 	var conn Connection = NewFakeConnection()
 
-	ready := NewReady()
+	ready := NewCtrlReady()
 
 	if ready.HasConnection(conn) {
 		t.Fail()
@@ -31,7 +30,7 @@ func Test_clear_connection(t *testing.T) {
 	var conn1 Connection = NewFakeConnection()
 	var conn2 Connection = NewFakeConnection()
 
-	ready := NewReady()
+	ready := NewCtrlReady()
 	ready.SetConnection(conn0)
 	ready.SetConnection(conn1)
 	ready.SetConnection(conn2)
@@ -55,7 +54,7 @@ func Test_remove_connection_when_it_is_closed(t *testing.T) {
 
 	var conn Connection = NewFakeConnection()
 
-	ready := NewReady()
+	ready := NewCtrlReady()
 	ready.SetConnection(conn)
 
 	conn.Close()
@@ -74,11 +73,11 @@ func Test_panic_in_OnText_when_conn_is_not_exists(t *testing.T) {
 
 	var conn Connection = NewFakeConnection()
 
-	ready := NewReady()
+	ready := NewCtrlReady()
 	ready.OnText(conn, kJson)
 }
 
-func Test_panic_in_OnText_when_OnReadyProc_is_nil(t *testing.T) {
+func Test_panic_in_OnText_when_OnCtrlReadyProc_is_nil(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r == nil {
@@ -88,7 +87,7 @@ func Test_panic_in_OnText_when_OnReadyProc_is_nil(t *testing.T) {
 
 	var conn Connection = NewFakeConnection()
 
-	ready := NewReady()
+	ready := NewCtrlReady()
 	ready.SetConnection(conn)
 	ready.OnText(conn, kJson)
 }
@@ -97,8 +96,8 @@ func Test_remove_connection_when_invalid_json_is_passed(t *testing.T) {
 
 	var conn Connection = NewFakeConnection()
 
-	ready := NewReady()
-	ready.OnReadyProc = func(proxy *Proxy) {
+	ready := NewCtrlReady()
+	ready.OnCtrlReadyProc = func(proxy *CtrlProxy) {
 		t.Fail()
 	}
 
@@ -126,8 +125,8 @@ func Test_ok(t *testing.T) {
 	var lhs Connection = NewFakeConnection()
 	var rhs Connection = lhs.(*FakeConnection).Other()
 
-	ready := NewReady()
-	ready.OnReadyProc = func(proxy *Proxy) {
+	ready := NewCtrlReady()
+	ready.OnCtrlReadyProc = func(proxy *CtrlProxy) {
 		if proxy == nil {
 			t.Fail()
 		}

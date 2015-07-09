@@ -1,4 +1,4 @@
-package ctrl
+package common
 
 import (
 	"encoding/json"
@@ -13,15 +13,15 @@ func (e *descError) Error() string {
 	return e.msg
 }
 
-type Desc struct {
+type CtrlDesc struct {
 	Json     string
 	CtrlId   string `json:"id"`
 	Endpoint string `json:"endpoint"`
 }
 
-func NewDesc(text string) (*Desc, error) {
+func NewCtrlDesc(text string) (*CtrlDesc, error) {
 
-	desc := &Desc{}
+	desc := &CtrlDesc{}
 	if err := json.Unmarshal([]byte(text), &desc); err != nil {
 		log.Println(err)
 		return nil, err
@@ -31,6 +31,29 @@ func NewDesc(text string) (*Desc, error) {
 		msg := "there is no id value in json string."
 		log.Println(msg)
 		return nil, &descError{msg}
+	}
+
+	if len(desc.Endpoint) < 1 {
+		msg := "there is no endpoint value in json string."
+		log.Println(msg)
+		return nil, &descError{msg}
+	}
+
+	desc.Json = text
+	return desc, nil
+}
+
+type TargetDesc struct {
+	Json     string
+	Endpoint string `json:"endpoint"`
+}
+
+func NewTargetDesc(text string) (*TargetDesc, error) {
+
+	desc := &TargetDesc{}
+	if err := json.Unmarshal([]byte(text), &desc); err != nil {
+		log.Println(err)
+		return nil, err
 	}
 
 	if len(desc.Endpoint) < 1 {
