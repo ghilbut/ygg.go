@@ -3,7 +3,7 @@ package fake_test
 import (
 	. "github.com/ghilbut/ygg.go/common"
 	. "github.com/ghilbut/ygg.go/test/fake"
-	"github.com/ghilbut/ygg.go/test/mock"
+	"github.com/ghilbut/ygg.go/test/mock/common"
 	"github.com/golang/mock/gomock"
 	"testing"
 )
@@ -115,14 +115,18 @@ func Test_close(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockDelegate := mock.NewMockConnectionDelegate(mockCtrl)
+	mockDelegate.EXPECT().OnClosed(lhs).Times(2)
 	mockDelegate.EXPECT().OnClosed(rhs).Times(2)
 
+	lhs.BindDelegate(mockDelegate)
 	rhs.BindDelegate(mockDelegate)
 	lhs.Close()
 
+	lhs.UnbindDelegate()
 	rhs.UnbindDelegate()
 	lhs.Close()
 
+	lhs.BindDelegate(mockDelegate)
 	rhs.BindDelegate(mockDelegate)
 	lhs.Close()
 }
@@ -137,13 +141,17 @@ func Test_closed(t *testing.T) {
 
 	mockDelegate := mock.NewMockConnectionDelegate(mockCtrl)
 	mockDelegate.EXPECT().OnClosed(lhs).Times(2)
+	mockDelegate.EXPECT().OnClosed(rhs).Times(2)
 
 	lhs.BindDelegate(mockDelegate)
+	rhs.BindDelegate(mockDelegate)
 	rhs.Close()
 
 	lhs.UnbindDelegate()
+	rhs.UnbindDelegate()
 	rhs.Close()
 
 	lhs.BindDelegate(mockDelegate)
+	rhs.BindDelegate(mockDelegate)
 	rhs.Close()
 }
