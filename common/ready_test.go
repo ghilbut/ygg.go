@@ -63,35 +63,6 @@ func Test_remove_connection_when_it_is_closed(t *testing.T) {
 	}
 }
 
-func Test_panic_in_OnText_when_conn_is_not_exists(t *testing.T) {
-
-	defer func() {
-		if r := recover(); r == nil {
-			t.Fail()
-		}
-	}()
-
-	var conn Connection = NewFakeConnection()
-
-	ready := NewCtrlReady()
-	ready.OnText(conn, kJson)
-}
-
-func Test_panic_in_OnText_when_OnCtrlReadyProc_is_nil(t *testing.T) {
-
-	defer func() {
-		if r := recover(); r == nil {
-			t.Fail()
-		}
-	}()
-
-	var conn Connection = NewFakeConnection()
-
-	ready := NewCtrlReady()
-	ready.SetConnection(conn)
-	ready.OnText(conn, kJson)
-}
-
 func Test_remove_connection_when_invalid_json_is_passed(t *testing.T) {
 
 	var conn Connection = NewFakeConnection()
