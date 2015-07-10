@@ -7,11 +7,11 @@ import (
 )
 
 const kFormat = `
-======== ASSERT >>>>>>>>
+>>>>>>>> ASSERT >>>>>>>>
 [FILE] %s:%d\n
 [FUNC] %s
 %s
-<<<<<<<< ASSERT ========`
+<<<<<<<< ASSERT <<<<<<<<`
 
 func getDetail() (file string, line int, function string) {
 	// NOTE(ghilbut):
@@ -33,6 +33,7 @@ func Assert(condition bool, a ...interface{}) {
 	}
 }
 
+/*
 func Assertf(condition bool, format string, a ...interface{}) {
 	if !condition {
 		file, line, function := getDetail()
@@ -40,3 +41,4 @@ func Assertf(condition bool, format string, a ...interface{}) {
 		log.Panicf(kFormat, file, line, function, msg)
 	}
 }
+*/
