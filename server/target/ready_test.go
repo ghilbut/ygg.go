@@ -9,7 +9,7 @@ import (
 
 const kJson = "{ \"endpoint\": \"A\" }"
 
-func Test_has_connection_after_set_connection(t *testing.T) {
+func Test_TargetReady_has_connection_after_set_connection(t *testing.T) {
 
 	var conn Connection = NewFakeConnection()
 
@@ -25,7 +25,7 @@ func Test_has_connection_after_set_connection(t *testing.T) {
 	}
 }
 
-func Test_clear_connection(t *testing.T) {
+func Test_TargetReady_clear_connection(t *testing.T) {
 
 	var conn0 Connection = NewFakeConnection()
 	var conn1 Connection = NewFakeConnection()
@@ -51,7 +51,7 @@ func Test_clear_connection(t *testing.T) {
 	}
 }
 
-func Test_remove_connection_when_it_is_closed(t *testing.T) {
+func Test_TargetReady_remove_connection_when_it_is_closed(t *testing.T) {
 
 	var conn Connection = NewFakeConnection()
 
@@ -64,7 +64,7 @@ func Test_remove_connection_when_it_is_closed(t *testing.T) {
 	}
 }
 
-func Test_panic_in_OnText_when_conn_is_not_exists(t *testing.T) {
+func Test_TargetReady_panic_in_OnText_when_conn_is_not_exists(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r == nil {
@@ -78,7 +78,7 @@ func Test_panic_in_OnText_when_conn_is_not_exists(t *testing.T) {
 	ready.OnText(conn, kJson)
 }
 
-func Test_panic_in_OnText_when_OnTargetReadyProc_is_nil(t *testing.T) {
+func Test_TargetReady_panic_in_OnText_when_OnTargetReadyProc_is_nil(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r == nil {
@@ -93,7 +93,7 @@ func Test_panic_in_OnText_when_OnTargetReadyProc_is_nil(t *testing.T) {
 	ready.OnText(conn, kJson)
 }
 
-func Test_remove_connection_when_invalid_json_is_passed(t *testing.T) {
+func Test_TargetReady_remove_connection_when_invalid_json_is_passed(t *testing.T) {
 
 	var conn Connection = NewFakeConnection()
 
@@ -121,7 +121,7 @@ func Test_remove_connection_when_invalid_json_is_passed(t *testing.T) {
 	}
 }
 
-func Test_ok(t *testing.T) {
+func Test_TargetReady_ok(t *testing.T) {
 
 	var lhs Connection = NewFakeConnection()
 	var rhs Connection = lhs.(*FakeConnection).Other()

@@ -13,14 +13,33 @@ type ManyToOneAdapter struct {
 	target *TargetProxy
 }
 
-func NewManyToOneAdapter(target *TargetProxy) *ManyToOneAdapter {
+func NewManyToOneAdapter(proxy *TargetProxy) *ManyToOneAdapter {
 
 	adapter := &ManyToOneAdapter{
 		ctrls:  make(map[Proxy]bool),
-		target: target,
+		target: proxy,
 	}
+	proxy.Delegate = adapter
 
 	return adapter
+}
+
+func (self *ManyToOneAdapter) SetCtrlProxy(proxy *CtrlProxy) bool {
+
+	ctrls := self.ctrls
+
+	if _, ok := ctrls[proxy]; ok {
+		return false
+	}
+
+	ctrls[proxy] = true
+	proxy.Delegate = self
+	return true
+}
+
+func (self *ManyToOneAdapter) HasCtrlProxy(proxy *CtrlProxy) bool {
+	_, ok := self.ctrls[proxy]
+	return ok
 }
 
 func (self *ManyToOneAdapter) OnCtrlText(proxy *CtrlProxy, text string) {
