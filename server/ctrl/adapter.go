@@ -17,7 +17,7 @@ type OneToOneAdapter struct {
 	q        chan bool
 }
 
-func NewOneToOneAdapter(proxy *TargetProxy) Adapter {
+func NewOneToOneAdapter(proxy *TargetProxy) *OneToOneAdapter {
 	log.Println("======== [OneToOneAdapter][NewOneToOneAdapter] ========")
 
 	adapter := &OneToOneAdapter{
@@ -27,7 +27,7 @@ func NewOneToOneAdapter(proxy *TargetProxy) Adapter {
 		q:        make(chan bool),
 	}
 
-	go func(adapter *OneToOneAdapter) {
+	go func() {
 		log.Println("======== [OneToOneAdapter][Closing][Wait] ========")
 
 		<-adapter.q
@@ -50,7 +50,7 @@ func NewOneToOneAdapter(proxy *TargetProxy) Adapter {
 		if adapter.delegate != nil {
 			adapter.delegate.OnClosed(adapter)
 		}
-	}(adapter)
+	}()
 
 	adapter.target.Delegate = adapter
 	return adapter
@@ -75,7 +75,7 @@ func (self *OneToOneAdapter) SetCtrlProxy(proxy *CtrlProxy) {
 func (self *OneToOneAdapter) Close() {
 	log.Println("======== [OneToOneAdapter][Close] ========")
 
-	//	defer recover()
+	defer recover()
 	self.q <- true
 }
 
@@ -107,7 +107,9 @@ func (self *OneToOneAdapter) OnCtrlClosed(proxy *CtrlProxy) {
 	assert.True(proxy != nil)
 	assert.True(proxy == self.ctrl)
 
-	//	defer recover()
+	self.ctrl.Delegate = nil
+	self.ctrl = nil
+	defer recover()
 	self.q <- true
 }
 
@@ -139,6 +141,8 @@ func (self *OneToOneAdapter) OnTargetClosed(proxy *TargetProxy) {
 	assert.True(proxy != nil)
 	assert.True(proxy == self.target)
 
-	//	defer recover()
+	self.target.Delegate = nil
+	self.target = nil
+	defer recover()
 	self.q <- true
 }
