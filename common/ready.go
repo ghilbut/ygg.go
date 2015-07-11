@@ -1,7 +1,7 @@
 package common
 
 import (
-	. "github.com/ghilbut/ygg.go/debug"
+	"github.com/ghilbut/ygg.go/debug"
 )
 
 type _OnCtrlReadyProc func(*CtrlProxy)
@@ -24,12 +24,9 @@ func NewCtrlReady() *CtrlReady {
 }
 
 func (self *CtrlReady) SetConnection(conn Connection) {
-	r := self.readys
+	assert.False(self.HasConnection(conn))
 
-	_, ok := r[conn]
-	Assert(!ok, "[ctrl.CtrlReady] connection is already exists.")
-
-	r[conn] = true
+	self.readys[conn] = true
 	conn.BindDelegate(self)
 }
 
@@ -46,9 +43,10 @@ func (self *CtrlReady) Clear() {
 }
 
 func (self *CtrlReady) OnText(conn Connection, text string) {
+	assert.True(self.HasConnection(conn))
+	assert.True(self.OnCtrlReadyProc != nil)
 
 	var proxy *CtrlProxy = nil
-	readys := self.readys
 	OnCtrlReadyProc := self.OnCtrlReadyProc
 
 	defer func() {
@@ -56,10 +54,6 @@ func (self *CtrlReady) OnText(conn Connection, text string) {
 			conn.Close()
 		}
 	}()
-
-	_, ok := readys[conn]
-	Assert(ok, "[ctrl.CtrlReady] there is no matched connection.")
-	Assert(OnCtrlReadyProc != nil, "[ctrl.CtrlReady] OnCtrlReadyProc callback is nil.")
 
 	desc, _ := NewCtrlDesc(text)
 	if desc == nil {
@@ -73,14 +67,10 @@ func (self *CtrlReady) OnText(conn Connection, text string) {
 }
 
 func (self *CtrlReady) OnBinary(conn Connection, bytes []byte) {
-	// nothing
+	assert.True(false)
 }
 
 func (self *CtrlReady) OnClosed(conn Connection) {
-	r := self.readys
-
-	_, ok := r[conn]
-	Assert(ok, "[ctrl.CtrlReady] there is no matched connection.")
-
-	delete(r, conn)
+	assert.True(self.HasConnection(conn))
+	delete(self.readys, conn)
 }
