@@ -21,7 +21,7 @@ func NewManager() *Manager {
 	}
 
 	manager.ctrlReady.OnCtrlReadyProc = func(proxy *CtrlProxy) {
-		log.Println("[OnCtrlReadyProc]")
+		log.Println("======== [][OnCtrlReadyProc] ========")
 
 		adapter, ok := manager.adapters[proxy.Desc.Endpoint]
 		if !ok {
@@ -29,13 +29,12 @@ func NewManager() *Manager {
 			return
 		}
 
-		if !adapter.SetCtrlProxy(proxy) {
-			proxy.Close()
-		}
+		adapter.SetCtrlProxy(proxy)
+		proxy.Close()
 	}
 
 	manager.targetReady.OnTargetReadyProc = func(proxy *TargetProxy) {
-		log.Println("[OnTargetReadyProc")
+		log.Println("======== [][OnTargetReadyProc] ========")
 
 		adapter := NewManyToOneAdapter(proxy)
 		if adapter == nil {
@@ -57,11 +56,15 @@ func NewManager() *Manager {
 }
 
 func (self *Manager) SetCtrlConnection(conn Connection) {
+	log.Println("======== [Manager][SetCtrlConnection] ========")
+
 	assert.True(conn != nil)
 	self.ctrlReady.SetConnection(conn)
 }
 
 func (self *Manager) SetTargetConnection(conn Connection) {
+	log.Println("======== [Manager][SetTargetConnection] ========")
+
 	assert.True(conn != nil)
 	self.targetReady.SetConnection(conn)
 }

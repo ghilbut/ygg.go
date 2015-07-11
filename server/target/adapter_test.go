@@ -6,6 +6,7 @@ import (
 	. "github.com/ghilbut/ygg.go/test/fake"
 	. "github.com/ghilbut/ygg.go/test/mock/common"
 	"github.com/golang/mock/gomock"
+	"log"
 	"testing"
 )
 
@@ -18,6 +19,7 @@ const kText = "Message"
 var kBytes = []byte{0x01, 0x02}
 
 func Test_ManyToOneAdapter_panic_if_target_is_nil_when_constructed(t *testing.T) {
+	log.Println("######## [Test_ManyToOneAdapter_panic_if_target_is_nil_when_constructed] ########")
 
 	defer func() {
 		if r := recover(); r == nil {
@@ -28,28 +30,8 @@ func Test_ManyToOneAdapter_panic_if_target_is_nil_when_constructed(t *testing.T)
 	NewManyToOneAdapter(nil)
 }
 
-func Test_ManyToOnAdapter_return_false_when_set_ctrl_proxy_which_already_exists(t *testing.T) {
-
-	var conn Connection = NewFakeConnection()
-
-	tdesc, _ := NewTargetDesc(kTargetJson)
-	tproxy := NewTargetProxy(conn, tdesc)
-
-	adapter := NewManyToOneAdapter(tproxy)
-
-	cdesc, _ := NewCtrlDesc(kCtrlA0Json)
-	cproxy := NewCtrlProxy(conn, cdesc)
-
-	if !adapter.SetCtrlProxy(cproxy) {
-		t.Fail()
-	}
-
-	if adapter.SetCtrlProxy(cproxy) {
-		t.Fail()
-	}
-}
-
 func Test_ManyToOneAdapter_target_notify_text_to_ctrls(t *testing.T) {
+	log.Println("######## [Test_ManyToOneAdapter_target_notify_text_to_ctrls] ########")
 
 	var lhs0 Connection = NewFakeConnection()
 	var lhs1 Connection = NewFakeConnection()
@@ -81,6 +63,7 @@ func Test_ManyToOneAdapter_target_notify_text_to_ctrls(t *testing.T) {
 }
 
 func Test_ManyToOneAdapter_target_recv_text_from_ctrls(t *testing.T) {
+	log.Println("######## [Test_ManyToOneAdapter_target_recv_text_from_ctrls] ########")
 
 	var lhs0 Connection = NewFakeConnection()
 	var lhs1 Connection = NewFakeConnection()
@@ -111,6 +94,7 @@ func Test_ManyToOneAdapter_target_recv_text_from_ctrls(t *testing.T) {
 }
 
 func Test_ManyToOneAdapter_target_notify_binary_to_ctrls(t *testing.T) {
+	log.Println("######## [Test_ManyToOneAdapter_target_notify_binary_to_ctrls] ########")
 
 	var lhs0 Connection = NewFakeConnection()
 	var lhs1 Connection = NewFakeConnection()
@@ -142,6 +126,7 @@ func Test_ManyToOneAdapter_target_notify_binary_to_ctrls(t *testing.T) {
 }
 
 func Test_ManyToOneAdapter_target_recv_binary_from_ctrls(t *testing.T) {
+	log.Println("######## [Test_ManyToOneAdapter_target_recv_binary_from_ctrls] ########")
 
 	var lhs0 Connection = NewFakeConnection()
 	var lhs1 Connection = NewFakeConnection()
@@ -172,6 +157,7 @@ func Test_ManyToOneAdapter_target_recv_binary_from_ctrls(t *testing.T) {
 }
 
 func Test_ManyToOneAdapter_close_all_ctrls_when_target_closed(t *testing.T) {
+	log.Println("######## [Test_ManyToOneAdapter_close_all_ctrls_when_target_closed] ########")
 
 	var lhs0 Connection = NewFakeConnection()
 	var lhs1 Connection = NewFakeConnection()
@@ -203,6 +189,7 @@ func Test_ManyToOneAdapter_close_all_ctrls_when_target_closed(t *testing.T) {
 }
 
 func Test_ManyToOneAdapter_remove_ctrl_proxy_after_closed(t *testing.T) {
+	log.Println("######## [Test_ManyToOneAdapter_remove_ctrl_proxy_after_closed] ########")
 
 	var lhs0 Connection = NewFakeConnection()
 	var lhs1 Connection = NewFakeConnection()
@@ -216,7 +203,7 @@ func Test_ManyToOneAdapter_remove_ctrl_proxy_after_closed(t *testing.T) {
 	tdesc, _ := NewTargetDesc(kTargetJson)
 	tproxy := NewTargetProxy(rhs.(*FakeConnection).Other(), tdesc)
 
-	var adapter Adapter = NewManyToOneAdapter(tproxy)
+	adapter := NewManyToOneAdapter(tproxy)
 	adapter.SetCtrlProxy(c0proxy)
 	adapter.SetCtrlProxy(c1proxy)
 

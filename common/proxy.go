@@ -2,6 +2,7 @@ package common
 
 import (
 	"github.com/ghilbut/ygg.go/debug"
+	"log"
 )
 
 type Proxy interface {
@@ -26,6 +27,7 @@ type CtrlProxyDelegate interface {
 }
 
 func NewCtrlProxy(conn Connection, desc *CtrlDesc) *CtrlProxy {
+	log.Println("======== [CtrlProxy][NewCtrlProxy] ========")
 	assert.True(conn != nil)
 	assert.True(desc != nil)
 
@@ -36,18 +38,25 @@ func NewCtrlProxy(conn Connection, desc *CtrlDesc) *CtrlProxy {
 }
 
 func (self *CtrlProxy) SendText(text string) {
+	log.Println("======== [CtrlProxy][SendText] ========")
+
 	self.conn.SendText(text)
 }
 
 func (self *CtrlProxy) SendBinary(bytes []byte) {
+	log.Println("======== [CtrlProxy][SendBinary] ========")
+
 	self.conn.SendBinary(bytes)
 }
 
 func (self *CtrlProxy) Close() {
+	log.Println("======== [CtrlProxy][Close] ========")
+
 	self.conn.Close()
 }
 
 func (self *CtrlProxy) OnText(conn Connection, text string) {
+	log.Println("======== [CtrlProxy][OnText] ========")
 	assert.True(conn == self.conn)
 
 	if d := self.Delegate; d != nil {
@@ -56,6 +65,7 @@ func (self *CtrlProxy) OnText(conn Connection, text string) {
 }
 
 func (self *CtrlProxy) OnBinary(conn Connection, bytes []byte) {
+	log.Println("======== [CtrlProxy][OnBinary] ========")
 	assert.True(conn == self.conn)
 
 	if d := self.Delegate; d != nil {
@@ -64,6 +74,7 @@ func (self *CtrlProxy) OnBinary(conn Connection, bytes []byte) {
 }
 
 func (self *CtrlProxy) OnClosed(conn Connection) {
+	log.Println("======== [CtrlProxy][OnClosed] ========")
 	assert.True(conn == self.conn)
 
 	if d := self.Delegate; d != nil {
@@ -87,6 +98,7 @@ type TargetProxyDelegate interface {
 }
 
 func NewTargetProxy(conn Connection, desc *TargetDesc) *TargetProxy {
+	log.Println("======== [TargetProxy][NewTargetProxy] ========")
 	assert.True(conn != nil)
 	assert.True(desc != nil)
 
@@ -97,19 +109,26 @@ func NewTargetProxy(conn Connection, desc *TargetDesc) *TargetProxy {
 }
 
 func (self *TargetProxy) SendText(text string) {
+	log.Println("======== [TargetProxy][SendText] ========")
+
 	self.conn.SendText(text)
 }
 
 func (self *TargetProxy) SendBinary(bytes []byte) {
+	log.Println("======== [TargetProxy][SendBinary] ========")
+
 	self.conn.SendBinary(bytes)
 }
 
 func (self *TargetProxy) Close() {
+	log.Println("======== [TargetProxy][Close] ========")
+
 	self.conn.Close()
 }
 
 func (self *TargetProxy) OnText(conn Connection, text string) {
-	assert.True(conn == self.conn, "conn is invalid connection.")
+	log.Println("======== [TargetProxy][OnText] ========")
+	assert.True(conn == self.conn)
 
 	if d := self.Delegate; d != nil {
 		d.OnTargetText(self, text)
@@ -117,7 +136,8 @@ func (self *TargetProxy) OnText(conn Connection, text string) {
 }
 
 func (self *TargetProxy) OnBinary(conn Connection, bytes []byte) {
-	assert.True(conn == self.conn, "conn is invalid connection.")
+	log.Println("======== [TargetProxy][OnBinary] ========")
+	assert.True(conn == self.conn)
 
 	if d := self.Delegate; d != nil {
 		d.OnTargetBinary(self, bytes)
@@ -125,7 +145,8 @@ func (self *TargetProxy) OnBinary(conn Connection, bytes []byte) {
 }
 
 func (self *TargetProxy) OnClosed(conn Connection) {
-	assert.True(conn == self.conn, "conn is invalid connection.")
+	log.Println("======== [TargetProxy][OnClosed] ========")
+	assert.True(conn == self.conn)
 
 	if d := self.Delegate; d != nil {
 		d.OnTargetClosed(self)

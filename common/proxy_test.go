@@ -5,12 +5,14 @@ import (
 	. "github.com/ghilbut/ygg.go/test/fake"
 	. "github.com/ghilbut/ygg.go/test/mock/common"
 	"github.com/golang/mock/gomock"
+	"log"
 	"testing"
 )
 
 const kJson = "{ \"id\": \"A\", \"endpoint\": \"B\" }"
 
 func Test_CtrlProxy_return_instance_with_endpoint_value(t *testing.T) {
+	log.Println("######## [Test_CtrlProxy_return_instance_with_endpoint_value] ########")
 
 	var lhs Connection = NewFakeConnection()
 	if lhs == nil {
@@ -34,6 +36,7 @@ func Test_CtrlProxy_return_instance_with_endpoint_value(t *testing.T) {
 }
 
 func Test_CtrlProxy_send_text(t *testing.T) {
+	log.Println("######## [Test_CtrlProxy_send_text] ########")
 
 	var lhs Connection = NewFakeConnection()
 	desc, _ := NewCtrlDesc(kJson)
@@ -50,6 +53,7 @@ func Test_CtrlProxy_send_text(t *testing.T) {
 }
 
 func Test_CtrlProxy_recv_text(t *testing.T) {
+	log.Println("######## [Test_CtrlProxy_recv_text] ########")
 
 	var lhs Connection = NewFakeConnection()
 	desc, _ := NewCtrlDesc(kJson)
@@ -72,6 +76,7 @@ func Test_CtrlProxy_recv_text(t *testing.T) {
 }
 
 func Test_CtrlProxy_send_binary(t *testing.T) {
+	log.Println("######## [Test_CtrlProxy_send_binary] ########")
 
 	var lhs Connection = NewFakeConnection()
 	desc, _ := NewCtrlDesc(kJson)
@@ -88,6 +93,7 @@ func Test_CtrlProxy_send_binary(t *testing.T) {
 }
 
 func Test_CtrlProxy_recv_binary(t *testing.T) {
+	log.Println("######## [Test_CtrlProxy_recv_binary] ########")
 
 	var lhs Connection = NewFakeConnection()
 	desc, _ := NewCtrlDesc(kJson)
@@ -110,6 +116,7 @@ func Test_CtrlProxy_recv_binary(t *testing.T) {
 }
 
 func Test_CtrlProxy_close(t *testing.T) {
+	log.Println("######## [Test_CtrlProxy_close] ########")
 
 	var lhs Connection = NewFakeConnection()
 	desc, _ := NewCtrlDesc(kJson)
@@ -126,6 +133,7 @@ func Test_CtrlProxy_close(t *testing.T) {
 }
 
 func Test_CtrlProxy_closed(t *testing.T) {
+	log.Println("######## [Test_CtrlProxy_closed] ########")
 
 	var lhs Connection = NewFakeConnection()
 	desc, _ := NewCtrlDesc(kJson)
@@ -148,6 +156,7 @@ func Test_CtrlProxy_closed(t *testing.T) {
 }
 
 func Test_TargetProxy_return_instance_with_endpoint_value(t *testing.T) {
+	log.Println("######## [Test_TargetProxy_return_instance_with_endpoint_value] ########")
 
 	desc, _ := NewTargetDesc(kJson)
 	if desc == nil {
@@ -171,6 +180,7 @@ func Test_TargetProxy_return_instance_with_endpoint_value(t *testing.T) {
 }
 
 func Test_TargetProxy_send_text(t *testing.T) {
+	log.Println("######## [Test_TargetProxy_send_text] ########")
 
 	var lhs Connection = NewFakeConnection()
 	desc, _ := NewTargetDesc(kJson)
@@ -187,6 +197,7 @@ func Test_TargetProxy_send_text(t *testing.T) {
 }
 
 func Test_TargetProxy_recv_text(t *testing.T) {
+	log.Println("######## [Test_TargetProxy_recv_text] ########")
 
 	var lhs Connection = NewFakeConnection()
 	desc, _ := NewTargetDesc(kJson)
@@ -209,6 +220,7 @@ func Test_TargetProxy_recv_text(t *testing.T) {
 }
 
 func Test_TargetProxy_send_binary(t *testing.T) {
+	log.Println("######## [Test_TargetProxy_send_binary] ########")
 
 	var lhs Connection = NewFakeConnection()
 	desc, _ := NewTargetDesc(kJson)
@@ -225,6 +237,7 @@ func Test_TargetProxy_send_binary(t *testing.T) {
 }
 
 func Test_TargetProxy_recv_binary(t *testing.T) {
+	log.Println("######## [Test_TargetProxy_recv_binary] ########")
 
 	var lhs Connection = NewFakeConnection()
 	desc, _ := NewTargetDesc(kJson)
@@ -247,6 +260,7 @@ func Test_TargetProxy_recv_binary(t *testing.T) {
 }
 
 func Test_TargetProxy_close(t *testing.T) {
+	log.Println("######## [Test_TargetProxy_close] ########")
 
 	var lhs Connection = NewFakeConnection()
 	desc, _ := NewTargetDesc(kJson)
@@ -263,6 +277,7 @@ func Test_TargetProxy_close(t *testing.T) {
 }
 
 func Test_TargetProxy_closed(t *testing.T) {
+	log.Println("######## [Test_TargetProxy_closed] ########")
 
 	var lhs Connection = NewFakeConnection()
 	desc, _ := NewTargetDesc(kJson)

@@ -19,7 +19,7 @@ import (
 // var bytes = []byte{0x01, 0x02}
 
 func Test_Manager_notify_text(t *testing.T) {
-	log.Println("======== [Test_Manager_notify_text] ========")
+	log.Println("######## [Test_Manager_notify_text] ########")
 
 	var ctrlA0 Connection = NewFakeConnection()
 	var ctrlA1 Connection = NewFakeConnection()
@@ -47,7 +47,7 @@ func Test_Manager_notify_text(t *testing.T) {
 }
 
 func Test_Manager_recv_text(t *testing.T) {
-	log.Println("======== [Test_Manager_recv_text] ========")
+	log.Println("######## [Test_Manager_recv_text] ########")
 
 	var ctrlA0 Connection = NewFakeConnection()
 	var ctrlA1 Connection = NewFakeConnection()
