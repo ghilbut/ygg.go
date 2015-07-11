@@ -52,56 +52,6 @@ func Test_assert_False_is_false(t *testing.T) {
 	False(false, kNotDisplay)
 }
 
-func Test_assert_Nil_is_not_nil(t *testing.T) {
-
-	defer func() {
-		if r := recover(); r == nil {
-			t.Fail()
-		}
-	}()
-
-	tmp := make(map[string]bool)
-	Nil(tmp, kDisplay)
-}
-
-func Test_assert_Nil_is_nil(t *testing.T) {
-
-	defer func() {
-		if r := recover(); r != nil {
-			t.Fail()
-		}
-	}()
-
-	var tmp map[string]bool
-	Nil(tmp, kNotDisplay)
-	Nil(nil, kNotDisplay)
-}
-
-func Test_assert_NotNil_is_nil(t *testing.T) {
-
-	defer func() {
-		if r := recover(); r == nil {
-			t.Fail()
-		}
-	}()
-
-	var tmp map[string]bool
-	NotNil(tmp, kDisplay)
-	NotNil(nil, kDisplay)
-}
-
-func Test_assert_NotNil_is_not_nil(t *testing.T) {
-
-	defer func() {
-		if r := recover(); r != nil {
-			t.Fail()
-		}
-	}()
-
-	tmp := make(map[string]bool)
-	NotNil(tmp, kNotDisplay)
-}
-
 func Test_assert_Contains_when_check_invalid_type_key(t *testing.T) {
 
 	defer func() {

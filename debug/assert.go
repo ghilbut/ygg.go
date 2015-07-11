@@ -39,18 +39,6 @@ func False(condition bool, a ...interface{}) {
 	}
 }
 
-func Nil(condition interface{}, a ...interface{}) {
-	if condition != nil && !reflect.ValueOf(condition).IsNil() {
-		assert("Nil", a)
-	}
-}
-
-func NotNil(condition interface{}, a ...interface{}) {
-	if condition == nil || reflect.ValueOf(condition).IsNil() {
-		assert("NotNil", a)
-	}
-}
-
 func Contains(m interface{}, k interface{}, a ...interface{}) {
 
 	const kName = "Contains"
