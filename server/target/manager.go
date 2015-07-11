@@ -2,7 +2,7 @@ package target
 
 import (
 	. "github.com/ghilbut/ygg.go/common"
-	. "github.com/ghilbut/ygg.go/debug"
+	"github.com/ghilbut/ygg.go/debug"
 	"log"
 )
 
@@ -57,11 +57,11 @@ func NewManager() *Manager {
 }
 
 func (self *Manager) SetCtrlConnection(conn Connection) {
-	Assert(conn != nil, "conn should not be nil.")
+	assert.True(conn != nil)
 	self.ctrlReady.SetConnection(conn)
 }
 
 func (self *Manager) SetTargetConnection(conn Connection) {
-	Assert(conn != nil, "conn should not be nil.")
+	assert.True(conn != nil)
 	self.targetReady.SetConnection(conn)
 }
