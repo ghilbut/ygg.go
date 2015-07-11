@@ -4,12 +4,17 @@ import (
 	. "github.com/ghilbut/ygg.go/common"
 	. "github.com/ghilbut/ygg.go/server/target"
 	. "github.com/ghilbut/ygg.go/test/fake"
+	. "github.com/ghilbut/ygg.go/test/mock/common"
+	. "github.com/ghilbut/ygg.go/test/mock/server/target"
+	"github.com/golang/mock/gomock"
+	"log"
 	"testing"
 )
 
 const kJson = "{ \"endpoint\": \"A\" }"
 
 func Test_TargetReady_has_connection_after_set_connection(t *testing.T) {
+	log.Println("######## [Test_TargetReady_has_connection_after_set_connection] ########")
 
 	var conn Connection = NewFakeConnection()
 
@@ -20,12 +25,14 @@ func Test_TargetReady_has_connection_after_set_connection(t *testing.T) {
 	}
 
 	ready.SetConnection(conn)
+
 	if !ready.HasConnection(conn) {
 		t.Fail()
 	}
 }
 
 func Test_TargetReady_clear_connection(t *testing.T) {
+	log.Println("######## [Test_TargetReady_clear_connection] ########")
 
 	var conn0 Connection = NewFakeConnection()
 	var conn1 Connection = NewFakeConnection()
@@ -52,6 +59,7 @@ func Test_TargetReady_clear_connection(t *testing.T) {
 }
 
 func Test_TargetReady_remove_connection_when_it_is_closed(t *testing.T) {
+	log.Println("######## [Test_TargetReady_remove_connection_when_it_is_closed] ########")
 
 	var conn Connection = NewFakeConnection()
 
@@ -59,83 +67,80 @@ func Test_TargetReady_remove_connection_when_it_is_closed(t *testing.T) {
 	ready.SetConnection(conn)
 
 	conn.Close()
+
 	if ready.HasConnection(conn) {
 		t.Fail()
 	}
-}
-
-func Test_TargetReady_panic_in_OnText_when_conn_is_not_exists(t *testing.T) {
-
-	defer func() {
-		if r := recover(); r == nil {
-			t.Fail()
-		}
-	}()
-
-	var conn Connection = NewFakeConnection()
-
-	ready := NewTargetReady()
-	ready.OnText(conn, kJson)
-}
-
-func Test_TargetReady_panic_in_OnText_when_OnTargetReadyProc_is_nil(t *testing.T) {
-
-	defer func() {
-		if r := recover(); r == nil {
-			t.Fail()
-		}
-	}()
-
-	var conn Connection = NewFakeConnection()
-
-	ready := NewTargetReady()
-	ready.SetConnection(conn)
-	ready.OnText(conn, kJson)
 }
 
 func Test_TargetReady_remove_connection_when_invalid_json_is_passed(t *testing.T) {
+	log.Println("######## [Test_TargetReady_remove_connection_when_invalid_json_is_passed] ########")
 
-	var conn Connection = NewFakeConnection()
+	var lhs Connection = NewFakeConnection()
+	var rhs = lhs.(*FakeConnection).Other()
+
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockConnectionDelegate := NewMockConnectionDelegate(mockCtrl)
+	mockConnectionDelegate.EXPECT().OnClosed(lhs).Times(3)
+	lhs.BindDelegate(mockConnectionDelegate)
+
+	mockTargetReadyDelegate := NewMockTargetReadyDelegate(mockCtrl)
+	mockTargetReadyDelegate.EXPECT().OnTargetProxy(gomock.Any()).Times(0)
 
 	ready := NewTargetReady()
-	ready.OnTargetReadyProc = func(proxy *TargetProxy) {
+	ready.Delegate = mockTargetReadyDelegate
+
+	ready.SetConnection(rhs)
+	lhs.SendText("")
+	if ready.HasConnection(rhs) {
 		t.Fail()
 	}
 
-	ready.SetConnection(conn)
-	ready.OnText(conn, "")
-	if ready.HasConnection(conn) {
+	ready.SetConnection(rhs)
+	lhs.SendText("{ \"key\": \"value")
+	if ready.HasConnection(rhs) {
 		t.Fail()
 	}
 
-	ready.SetConnection(conn)
-	ready.OnText(conn, "{ \"key\": \"value")
-	if ready.HasConnection(conn) {
-		t.Fail()
-	}
-
-	ready.SetConnection(conn)
-	ready.OnText(conn, "{}")
-	if ready.HasConnection(conn) {
+	ready.SetConnection(rhs)
+	lhs.SendText("{}")
+	if ready.HasConnection(rhs) {
 		t.Fail()
 	}
 }
 
+type _matcher struct {
+	endpoint string
+}
+
+func (self *_matcher) Matches(x interface{}) bool {
+	if proxy, ok := x.(*TargetProxy); ok {
+		return proxy.Desc.Endpoint == self.endpoint
+	}
+	return false
+}
+
+func (self *_matcher) String() string {
+	return "is target proxy"
+}
+
 func Test_TargetReady_ok(t *testing.T) {
+	log.Println("######## [Test_TargetReady_ok] ########")
 
 	var lhs Connection = NewFakeConnection()
 	var rhs Connection = lhs.(*FakeConnection).Other()
 
-	ready := NewTargetReady()
-	ready.OnTargetReadyProc = func(proxy *TargetProxy) {
-		if proxy == nil {
-			t.Fail()
-		}
-		if proxy.Desc.Endpoint != "A" {
-			t.Fail()
-		}
-	}
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
 
+	mockDelegate := NewMockTargetReadyDelegate(mockCtrl)
+	mockDelegate.EXPECT().OnTargetProxy(&_matcher{"A"})
+
+	ready := NewTargetReady()
+	ready.Delegate = mockDelegate
 	ready.SetConnection(rhs)
+
 	lhs.SendText(kJson)
 }
