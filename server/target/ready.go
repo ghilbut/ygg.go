@@ -2,6 +2,7 @@ package target
 
 import (
 	. "github.com/ghilbut/ygg.go/common"
+	"github.com/ghilbut/ygg.go/debug"
 )
 
 type _OnTargetReadyProc func(*TargetProxy)
@@ -24,12 +25,9 @@ func NewTargetReady() *TargetReady {
 }
 
 func (self *TargetReady) SetConnection(conn Connection) {
-	r := self.readys
-	if _, ok := r[conn]; ok {
-		panic("[ctrl.TargetReady] connection is already exists.")
-	}
+	assert.True(!self.HasConnection(conn))
 
-	r[conn] = true
+	self.readys[conn] = true
 	conn.BindDelegate(self)
 }
 
@@ -39,16 +37,16 @@ func (self *TargetReady) HasConnection(conn Connection) bool {
 }
 
 func (self *TargetReady) Clear() {
-	r := self.readys
-	for conn, _ := range r {
+	for conn, _ := range self.readys {
 		conn.Close()
 	}
 }
 
 func (self *TargetReady) OnText(conn Connection, text string) {
+	assert.True(self.HasConnection(conn))
+	assert.True(self.OnTargetReadyProc != nil)
 
 	var proxy *TargetProxy = nil
-	readys := self.readys
 	OnTargetReadyProc := self.OnTargetReadyProc
 
 	defer func() {
@@ -56,14 +54,6 @@ func (self *TargetReady) OnText(conn Connection, text string) {
 			conn.Close()
 		}
 	}()
-
-	if _, ok := readys[conn]; !ok {
-		panic("[ctrl.TargetReady] there is no matched connection.")
-	}
-
-	if OnTargetReadyProc == nil {
-		panic("[ctrl.TargetReady] OnTargetReadyProc callback is nil.")
-	}
 
 	desc, _ := NewTargetDesc(text)
 	if desc == nil {
@@ -77,14 +67,10 @@ func (self *TargetReady) OnText(conn Connection, text string) {
 }
 
 func (self *TargetReady) OnBinary(conn Connection, bytes []byte) {
-	// nothing
+	assert.True(false)
 }
 
 func (self *TargetReady) OnClosed(conn Connection) {
-	r := self.readys
-	if _, ok := r[conn]; !ok {
-		panic("[ctrl.TargetReady] there is no matched connection.")
-	}
-
-	delete(r, conn)
+	assert.True(self.HasConnection(conn))
+	delete(self.readys, conn)
 }
