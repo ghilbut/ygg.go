@@ -1,6 +1,11 @@
 package common
 
 type Adapter interface {
-	SetCtrlProxy(proxy *CtrlProxy) bool
-	HasCtrlProxy(proxy *CtrlProxy) bool
+	BindDelegate(delegate AdapterDelegate)
+	SetCtrlProxy(proxy *CtrlProxy)
+	Close()
+}
+
+type AdapterDelegate interface {
+	OnClosed(adapter Adapter)
 }

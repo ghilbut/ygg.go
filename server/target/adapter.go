@@ -19,8 +19,8 @@ func NewManyToOneAdapter(proxy *TargetProxy) *ManyToOneAdapter {
 		ctrls:  make(map[Proxy]bool),
 		target: proxy,
 	}
-	proxy.Delegate = adapter
 
+	adapter.target.Delegate = adapter
 	return adapter
 }
 

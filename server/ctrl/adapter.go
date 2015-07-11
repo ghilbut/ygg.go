@@ -1,142 +1,144 @@
 package ctrl
 
 import (
-	"github.com/ghilbut/ygg.go/common/ctrl"
-	"github.com/ghilbut/ygg.go/common/target"
+	. "github.com/ghilbut/ygg.go/common"
+	"github.com/ghilbut/ygg.go/debug"
+	"log"
 )
 
-type Adapter interface {
-	SetTarget(proxy *target.Proxy)
-	OnCtrlText(ctrl *ctrl.Proxy, text string)
-	OnCtrlBinary(ctrl *ctrl.Proxy, bytes []byte)
-	OnCtrlClosed(ctrl *ctrl.Proxy)
-	OnTargetText(target *target.Proxy, text string)
-	OnTargetBinary(target *target.Proxy, bytes []byte)
-	OnTargetClosed(target *target.Proxy)
-}
-
-type _CtrlBinder struct {
-	ctrl.ProxyDelegate
-
-	proxy    *ctrl.Proxy
-	Delegate Adapter
-}
-
-func (self *_CtrlBinder) SendText(text string) {
-	self.proxy.SendText(text)
-}
-
-func (self *_CtrlBinder) SendBinary(bytes []byte) {
-	self.proxy.SendBinary(bytes)
-}
-
-func (self *_CtrlBinder) Close() {
-	self.proxy.Close()
-}
-
-func (self *_CtrlBinder) OnText(proxy *ctrl.Proxy, text string) {
-	self.Delegate.OnCtrlText(proxy, text)
-}
-
-func (self *_CtrlBinder) OnBinary(proxy *ctrl.Proxy, bytes []byte) {
-	self.Delegate.OnCtrlBinary(proxy, bytes)
-}
-
-func (self *_CtrlBinder) OnClosed(proxy *ctrl.Proxy) {
-	self.Delegate.OnCtrlClosed(proxy)
-}
-
-type _TargetBinder struct {
-	target.ProxyDelegate
-
-	proxy    *target.Proxy
-	Delegate Adapter
-}
-
-func (self *_TargetBinder) SendText(text string) {
-	self.proxy.SendText(text)
-}
-
-func (self *_TargetBinder) SendBinary(bytes []byte) {
-	self.proxy.SendBinary(bytes)
-}
-
-func (self *_TargetBinder) Close() {
-	self.proxy.Close()
-}
-
-func (self *_TargetBinder) OnText(proxy *target.Proxy, text string) {
-	self.Delegate.OnTargetText(proxy, text)
-}
-
-func (self *_TargetBinder) OnBinary(proxy *target.Proxy, bytes []byte) {
-	self.Delegate.OnTargetBinary(proxy, bytes)
-}
-
-func (self *_TargetBinder) OnClosed(proxy *target.Proxy) {
-	self.Delegate.OnTargetClosed(proxy)
-}
-
-type BypassAdapter struct {
+type OneToOneAdapter struct {
 	Adapter
+	CtrlProxyDelegate
+	TargetProxyDelegate
 
-	cbinder *_CtrlBinder
-	tbinder *_TargetBinder
+	ctrl     *CtrlProxy
+	target   *TargetProxy
+	delegate AdapterDelegate
+	q        chan bool
 }
 
-func NewBypassAdapter(ctrl *ctrl.Proxy) Adapter {
+func NewOneToOneAdapter(proxy *TargetProxy) Adapter {
+	log.Println("======== [OneToOneAdapter][NewOneToOneAdapter] ========")
 
-	self := &BypassAdapter{
-		cbinder: &_CtrlBinder{proxy: ctrl, Delegate: nil},
-		tbinder: nil,
+	adapter := &OneToOneAdapter{
+		ctrl:     nil,
+		target:   proxy,
+		delegate: nil,
+		q:        make(chan bool),
 	}
 
-	self.cbinder.Delegate = self
+	go func(adapter *OneToOneAdapter) {
+		log.Println("======== [OneToOneAdapter][Closing][Wait] ========")
 
-	return self
+		<-adapter.q
+		close(adapter.q)
+
+		log.Println("======== [OneToOneAdapter][Closing][Continue] ========")
+
+		if ctrl := adapter.ctrl; ctrl != nil {
+			adapter.ctrl = nil
+			ctrl.Delegate = nil
+			ctrl.Close()
+		}
+
+		if target := adapter.target; target != nil {
+			adapter.target = nil
+			target.Delegate = nil
+			target.Close()
+		}
+
+		if adapter.delegate != nil {
+			adapter.delegate.OnClosed(adapter)
+		}
+	}(adapter)
+
+	adapter.target.Delegate = adapter
+	return adapter
 }
 
-func (self *BypassAdapter) SetTarget(proxy *target.Proxy) {
-	self.tbinder = &_TargetBinder{proxy: proxy, Delegate: nil}
-	self.tbinder.Delegate = self
+func (self *OneToOneAdapter) BindDelegate(delegate AdapterDelegate) {
+	log.Println("======== [OneToOneAdapter][BindDelegate] ========")
+
+	self.delegate = delegate
 }
 
-func (self *BypassAdapter) OnCtrlText(ctrl *ctrl.Proxy, text string) {
-	if t := self.tbinder; t != nil {
-		t.SendText(text)
+func (self *OneToOneAdapter) SetCtrlProxy(proxy *CtrlProxy) {
+	log.Println("======== [OneToOneAdapter][SetCtrlProxy] ========")
+
+	assert.True(proxy != nil)
+	assert.True(self.ctrl == nil)
+
+	self.ctrl = proxy
+	self.ctrl.Delegate = self
+}
+
+func (self *OneToOneAdapter) Close() {
+	log.Println("======== [OneToOneAdapter][Close] ========")
+
+	//	defer recover()
+	self.q <- true
+}
+
+func (self *OneToOneAdapter) OnCtrlText(proxy *CtrlProxy, text string) {
+	log.Println("======== [OneToOneAdapter][OnCtrlText] ========")
+
+	assert.True(proxy != nil)
+	assert.True(proxy == self.ctrl)
+
+	if self.target != nil {
+		self.target.SendText(text)
 	}
 }
 
-func (self *BypassAdapter) OnCtrlBinary(ctrl *ctrl.Proxy, bytes []byte) {
-	if t := self.tbinder; t != nil {
-		t.SendBinary(bytes)
-	}
+func (self *OneToOneAdapter) OnCtrlBinary(proxy *CtrlProxy, bytes []byte) {
+	log.Println("======== [OneToOneAdapter][OnCtrlBinary] ========")
 
-}
+	assert.True(proxy != nil)
+	assert.True(proxy == self.ctrl)
 
-func (self *BypassAdapter) OnCtrlClosed(ctrl *ctrl.Proxy) {
-	self.cbinder = nil
-	if t := self.tbinder; t != nil {
-		t.Close()
+	if self.target != nil {
+		self.target.SendBinary(bytes)
 	}
 }
 
-func (self *BypassAdapter) OnTargetText(target *target.Proxy, text string) {
-	if c := self.cbinder; c != nil {
-		c.SendText(text)
-	}
+func (self *OneToOneAdapter) OnCtrlClosed(proxy *CtrlProxy) {
+	log.Println("======== [OneToOneAdapter][OnCtrlClosed] ========")
 
+	assert.True(proxy != nil)
+	assert.True(proxy == self.ctrl)
+
+	//	defer recover()
+	self.q <- true
 }
 
-func (self *BypassAdapter) OnTargetBinary(target *target.Proxy, bytes []byte) {
-	if c := self.cbinder; c != nil {
-		c.SendBinary(bytes)
+func (self *OneToOneAdapter) OnTargetText(proxy *TargetProxy, text string) {
+	log.Println("======== [OneToOneAdapter][OnTargetText] ========")
+
+	assert.True(proxy != nil)
+	assert.True(proxy == self.target)
+
+	if self.ctrl != nil {
+		self.ctrl.SendText(text)
 	}
 }
 
-func (self *BypassAdapter) OnTargetClosed(target *target.Proxy) {
-	self.tbinder = nil
-	if c := self.cbinder; c != nil {
-		c.Close()
+func (self *OneToOneAdapter) OnTargetBinary(proxy *TargetProxy, bytes []byte) {
+	log.Println("======== [OneToOneAdapter][OnTargetBinary] ========")
+
+	assert.True(proxy != nil)
+	assert.True(proxy == self.target)
+
+	if self.ctrl != nil {
+		self.ctrl.SendBinary(bytes)
 	}
+}
+
+func (self *OneToOneAdapter) OnTargetClosed(proxy *TargetProxy) {
+	log.Println("======== [OneToOneAdapter][OnTargetClosed] ========")
+
+	assert.True(proxy != nil)
+	assert.True(proxy == self.target)
+
+	//	defer recover()
+	self.q <- true
 }

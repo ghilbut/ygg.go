@@ -2,29 +2,110 @@ package ctrl_test
 
 import (
 	. "github.com/ghilbut/ygg.go/common"
-	"github.com/ghilbut/ygg.go/common/ctrl"
-	"github.com/ghilbut/ygg.go/common/target"
 	. "github.com/ghilbut/ygg.go/server/ctrl"
 	. "github.com/ghilbut/ygg.go/test/fake"
+	. "github.com/ghilbut/ygg.go/test/mock/common"
+	"github.com/golang/mock/gomock"
+	"log"
 	"testing"
 )
 
-func Test_(t *testing.T) {
+const kCtrlJson = "{ \"id\": \"A\", \"endpoint\": \"B\" }"
+const kTargetJson = "{ \"endpoint\": \"B\" }"
 
-	var lhs Connection = NewFakeConnection()
-	var rhs Connection = NewFakeConnection()
+const kText = "Message"
 
-	const kCtrlJson = "{ \"id\": \"A\", \"endpoint\": \"B\" }"
-	cdesc, _ := ctrl.NewDesc(kCtrlJson)
-	cproxy := ctrl.NewProxy(lhs.(*FakeConnection).Other(), cdesc)
+var kBytes = []byte{0x01, 0x02}
 
-	adapter := NewBypassAdapter(ctrl)
-	if adapter == nil {
-		t.Fail()
-	}
+func Test_OneToOneAdapter_close_ctrl(t *testing.T) {
+	log.Println("######## [Test_OneToOneAdapter_close_ctrl] ########")
 
-	const kTargetJson = "{ \"endpoint\": \"B\" }"
-	tdesc, _ := target.NewDesc(kTargetJson)
-	tproxy := target.NewProxy(tdesc, rhs.(*FakeConnection).Other())
-	adpater.SetTarget(tproxy)
+	var ctrl Connection = NewFakeConnection()
+	var target Connection = NewFakeConnection()
+
+	cdesc, _ := NewCtrlDesc(kCtrlJson)
+	cproxy := NewCtrlProxy(ctrl.(*FakeConnection).Other(), cdesc)
+
+	tdesc, _ := NewTargetDesc(kTargetJson)
+	tproxy := NewTargetProxy(target.(*FakeConnection).Other(), tdesc)
+
+	adapter := NewOneToOneAdapter(tproxy)
+	adapter.SetCtrlProxy(cproxy)
+
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockConnDelegate := NewMockConnectionDelegate(mockCtrl)
+	mockConnDelegate.EXPECT().OnClosed(ctrl)
+	mockConnDelegate.EXPECT().OnClosed(target)
+	ctrl.BindDelegate(mockConnDelegate)
+	target.BindDelegate(mockConnDelegate)
+
+	mockAdapterDelegate := NewMockAdapterDelegate(mockCtrl)
+	mockAdapterDelegate.EXPECT().OnClosed(adapter)
+	adapter.BindDelegate(mockAdapterDelegate)
+
+	ctrl.Close()
+}
+
+func Test_OneToOneAdapter_close_target(t *testing.T) {
+	log.Println("######## [Test_OneToOneAdapter_close_target] ########")
+
+	var ctrl Connection = NewFakeConnection()
+	var target Connection = NewFakeConnection()
+
+	cdesc, _ := NewCtrlDesc(kCtrlJson)
+	cproxy := NewCtrlProxy(ctrl.(*FakeConnection).Other(), cdesc)
+
+	tdesc, _ := NewTargetDesc(kTargetJson)
+	tproxy := NewTargetProxy(target.(*FakeConnection).Other(), tdesc)
+
+	adapter := NewOneToOneAdapter(tproxy)
+	adapter.SetCtrlProxy(cproxy)
+
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockConnDelegate := NewMockConnectionDelegate(mockCtrl)
+	mockConnDelegate.EXPECT().OnClosed(ctrl)
+	mockConnDelegate.EXPECT().OnClosed(target)
+	ctrl.BindDelegate(mockConnDelegate)
+	target.BindDelegate(mockConnDelegate)
+
+	mockAdapterDelegate := NewMockAdapterDelegate(mockCtrl)
+	mockAdapterDelegate.EXPECT().OnClosed(adapter)
+	adapter.BindDelegate(mockAdapterDelegate)
+
+	target.Close()
+}
+
+func Test_OneToOneAdapter_close_adapter(t *testing.T) {
+	log.Println("######## [Test_OneToOneAdapter_close_adapter] ########")
+
+	var ctrl Connection = NewFakeConnection()
+	var target Connection = NewFakeConnection()
+
+	cdesc, _ := NewCtrlDesc(kCtrlJson)
+	cproxy := NewCtrlProxy(ctrl.(*FakeConnection).Other(), cdesc)
+
+	tdesc, _ := NewTargetDesc(kTargetJson)
+	tproxy := NewTargetProxy(target.(*FakeConnection).Other(), tdesc)
+
+	adapter := NewOneToOneAdapter(tproxy)
+	adapter.SetCtrlProxy(cproxy)
+
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockConnDelegate := NewMockConnectionDelegate(mockCtrl)
+	mockConnDelegate.EXPECT().OnClosed(ctrl)
+	mockConnDelegate.EXPECT().OnClosed(target)
+	ctrl.BindDelegate(mockConnDelegate)
+	target.BindDelegate(mockConnDelegate)
+
+	mockAdapterDelegate := NewMockAdapterDelegate(mockCtrl)
+	mockAdapterDelegate.EXPECT().OnClosed(adapter)
+	adapter.BindDelegate(mockAdapterDelegate)
+
+	adapter.Close()
 }
