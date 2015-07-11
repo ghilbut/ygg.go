@@ -8,11 +8,11 @@ import (
 )
 
 const kFormat = `
->>>>>>>> [ygg.go] assert.%s >>>>>>>>
+>>> [ygg.go] assert.%s >>>
 [FILE] %s:%d\n
 [FUNC] %s
 %s
-<<<<<<<< [ygg.go] assert.%s <<<<<<<<`
+<<< [ygg.go] assert.%s <<<`
 
 func assert(t string, a ...interface{}) {
 	// NOTE(ghilbut):
@@ -33,18 +33,46 @@ func True(condition bool, a ...interface{}) {
 	}
 }
 
+func False(condition bool, a ...interface{}) {
+	if condition {
+		assert("False", a)
+	}
+}
+
+func Nil(condition interface{}, a ...interface{}) {
+	if condition != nil && !reflect.ValueOf(condition).IsNil() {
+		assert("Nil", a)
+	}
+}
+
+func NotNil(condition interface{}, a ...interface{}) {
+	if condition == nil || reflect.ValueOf(condition).IsNil() {
+		assert("NotNil", a)
+	}
+}
+
 func Contains(m interface{}, k interface{}, a ...interface{}) {
 
-	True(m != nil, "m should not be nil.", "\n", a)
-	True(k != nil, "k should not be nil.", "\n", a)
+	const kName = "Contains"
+
+	if m == nil {
+		assert(kName, "m should not be nil.", "\n", a)
+	}
+	if k == nil {
+		assert(kName, "k should not be nil.", "\n", a)
+	}
 
 	vm := reflect.ValueOf(m)
 	vk := reflect.ValueOf(k)
 
-	True(vm.Kind() == reflect.Map, "m should be map.", "\n", a)
-	True(vm.Type().Key() == vk.Type(), "k is not allowed key type.", "\n", a)
+	if vm.Kind() != reflect.Map {
+		assert(kName, "m should be map.", "\n", a)
+	}
+	if vm.Type().Key() != vk.Type() {
+		assert(kName, "k is not allowed key type.", "\n", a)
+	}
 
 	if vm.MapIndex(vk).Interface() == nil {
-		assert("Contains", a)
+		assert(kName, a)
 	}
 }
