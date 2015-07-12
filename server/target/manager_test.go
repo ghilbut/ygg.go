@@ -127,3 +127,34 @@ func Test_TargetManager_recv_binary(t *testing.T) {
 	ctrlA0.SendBinary(kBytes)
 	ctrlA1.SendBinary(kBytes)
 }
+
+func Test_TargetManager_remove_adapter_when_target_is_closed(t *testing.T) {
+	log.Println("######## [Test_TargetManager_remove_adapter_when_target_is_closed] ########")
+
+	var ctrlA0 Connection = NewFakeConnection()
+	var ctrlA1 Connection = NewFakeConnection()
+	var target Connection = NewFakeConnection()
+
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockDelegate := NewMockConnectionDelegate(mockCtrl)
+	mockDelegate.EXPECT().OnClosed(gomock.Any()).Times(2)
+	ctrlA0.BindDelegate(mockDelegate)
+	ctrlA1.BindDelegate(mockDelegate)
+
+	manager := NewTargetManager()
+	manager.SetTargetConnection(target.(*FakeConnection).Other())
+	target.SendText(kTargetJson)
+
+	manager.SetCtrlConnection(ctrlA0.(*FakeConnection).Other())
+	ctrlA0.SendText(kCtrlA0Json)
+	manager.SetCtrlConnection(ctrlA1.(*FakeConnection).Other())
+	ctrlA1.SendText(kCtrlA1Json)
+
+	target.Close()
+
+	if manager.HasEndpoint("B") {
+		t.Fail()
+	}
+}
