@@ -107,7 +107,7 @@ func Test_FakeConnectee_unregister(t *testing.T) {
 }
 
 func Test_FakeConnectee_delegate_connection_when_set_connection(t *testing.T) {
-	log.Println("######## [Test_FakeConnectee_] ########")
+	log.Println("######## [Test_FakeConnectee_delegate_connection_when_set_connection] ########")
 
 	conn := NewFakeConnection()
 
@@ -123,7 +123,7 @@ func Test_FakeConnectee_delegate_connection_when_set_connection(t *testing.T) {
 }
 
 func Test_FakeConnectee_close_connection_when_not_started(t *testing.T) {
-	log.Println("######## [Test_FakeConnectee_] ########")
+	log.Println("######## [Test_FakeConnectee_close_connection_when_not_started] ########")
 
 	conn := NewFakeConnection()
 
