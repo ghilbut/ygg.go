@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-const kJson = "{ \"endpoint\": \"A\" }"
+const kJson = "{ \"endpoint\": \"B\" }"
 
 func Test_TargetReady_has_connection_after_set_connection(t *testing.T) {
 	log.Println("######## [Test_TargetReady_has_connection_after_set_connection] ########")
@@ -136,7 +136,7 @@ func Test_TargetReady_ok(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockDelegate := NewMockTargetReadyDelegate(mockCtrl)
-	mockDelegate.EXPECT().OnTargetProxy(&_matcher{"A"})
+	mockDelegate.EXPECT().OnTargetProxy(&_matcher{"B"})
 
 	ready := NewTargetReady()
 	ready.Delegate = mockDelegate

@@ -16,7 +16,7 @@ import (
 
 // const kText = "Message"
 
-// var bytes = []byte{0x01, 0x02}
+// var kBytes = []byte{0x01, 0x02}
 
 func Test_TargetManager_notify_text(t *testing.T) {
 	log.Println("######## [Test_TargetManager_notify_text] ########")
@@ -71,4 +71,59 @@ func Test_TargetManager_recv_text(t *testing.T) {
 
 	ctrlA0.SendText(kText)
 	ctrlA1.SendText(kText)
+}
+
+func Test_TargetManager_notify_binary(t *testing.T) {
+	log.Println("######## [Test_TargetManager_notify_binary] ########")
+
+	var ctrlA0 Connection = NewFakeConnection()
+	var ctrlA1 Connection = NewFakeConnection()
+	var target Connection = NewFakeConnection()
+
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockDelegate := NewMockConnectionDelegate(mockCtrl)
+	mockDelegate.EXPECT().OnBinary(ctrlA0, kBytes)
+	mockDelegate.EXPECT().OnBinary(ctrlA1, kBytes)
+	ctrlA0.BindDelegate(mockDelegate)
+	ctrlA1.BindDelegate(mockDelegate)
+
+	manager := NewTargetManager()
+	manager.SetTargetConnection(target.(*FakeConnection).Other())
+	target.SendText(kTargetJson)
+
+	manager.SetCtrlConnection(ctrlA0.(*FakeConnection).Other())
+	ctrlA0.SendText(kCtrlA0Json)
+	manager.SetCtrlConnection(ctrlA1.(*FakeConnection).Other())
+	ctrlA1.SendText(kCtrlA1Json)
+
+	target.SendBinary(kBytes)
+}
+
+func Test_TargetManager_recv_binary(t *testing.T) {
+	log.Println("######## [Test_TargetManager_recv_binary] ########")
+
+	var ctrlA0 Connection = NewFakeConnection()
+	var ctrlA1 Connection = NewFakeConnection()
+	var target Connection = NewFakeConnection()
+
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockDelegate := NewMockConnectionDelegate(mockCtrl)
+	mockDelegate.EXPECT().OnBinary(target, kBytes).Times(2)
+	target.BindDelegate(mockDelegate)
+
+	manager := NewTargetManager()
+	manager.SetTargetConnection(target.(*FakeConnection).Other())
+	target.SendText(kTargetJson)
+
+	manager.SetCtrlConnection(ctrlA0.(*FakeConnection).Other())
+	ctrlA0.SendText(kCtrlA0Json)
+	manager.SetCtrlConnection(ctrlA1.(*FakeConnection).Other())
+	ctrlA1.SendText(kCtrlA1Json)
+
+	ctrlA0.SendBinary(kBytes)
+	ctrlA1.SendBinary(kBytes)
 }

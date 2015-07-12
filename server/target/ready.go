@@ -38,6 +38,7 @@ func (self *TargetReady) SetConnection(conn Connection) {
 
 func (self *TargetReady) HasConnection(conn Connection) bool {
 	log.Printf("======== [TargetReady][HasConnection] ========")
+	assert.True(conn != nil)
 
 	_, ok := self.readys[conn]
 	return ok

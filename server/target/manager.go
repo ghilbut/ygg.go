@@ -16,6 +16,7 @@ type TargetManager struct {
 }
 
 func NewTargetManager() *TargetManager {
+	log.Println("======== [TargetManager][NewTargetManager] ========")
 
 	manager := &TargetManager{
 		ctrlReady:         NewCtrlReady(),
@@ -24,21 +25,8 @@ func NewTargetManager() *TargetManager {
 		adapterToEndpoint: make(map[Adapter]string),
 	}
 
+	manager.ctrlReady.Delegate = manager
 	manager.targetReady.Delegate = manager
-
-	manager.ctrlReady.OnCtrlReadyProc = func(proxy *CtrlProxy) {
-		log.Println("======== [][OnCtrlReadyProc] ========")
-
-		adapter, ok := manager.endpointToAdapter[proxy.Desc.Endpoint]
-		if !ok {
-			proxy.Close()
-			return
-		}
-
-		adapter.SetCtrlProxy(proxy)
-		proxy.Close()
-	}
-
 	return manager
 }
 
@@ -73,6 +61,19 @@ func (self *TargetManager) HasEndpoint(endpoint string) bool {
 	_, check := self.adapterToEndpoint[adapter]
 	assert.True(ok == check)
 	return ok
+}
+
+func (self *TargetManager) OnCtrlProxy(proxy *CtrlProxy) {
+	log.Println("======== [TargetManager][OnCtrlProxy] ========")
+
+	endpoint := proxy.Desc.Endpoint
+	adapter, ok := self.endpointToAdapter[endpoint]
+	if !ok {
+		proxy.Close()
+		return
+	}
+
+	adapter.SetCtrlProxy(proxy)
 }
 
 func (self *TargetManager) OnTargetProxy(proxy *TargetProxy) {
