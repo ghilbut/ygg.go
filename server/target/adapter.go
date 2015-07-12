@@ -48,7 +48,7 @@ func NewManyToOneAdapter(proxy *TargetProxy) *ManyToOneAdapter {
 		}
 
 		if adapter.delegate != nil {
-			adapter.delegate.OnClosed(adapter)
+			adapter.delegate.OnAdapterClosed(adapter)
 		}
 	}()
 
@@ -60,6 +60,12 @@ func (self *ManyToOneAdapter) BindDelegate(delegate AdapterDelegate) {
 	log.Println("======== [ManyToOneAdapter][BindDelegate] ========")
 
 	self.delegate = delegate
+}
+
+func (self *ManyToOneAdapter) UnbindDelegate() {
+	log.Println("======== [ManyToOneAdapter][UnbindDelegate] ========")
+
+	self.delegate = nil
 }
 
 func (self *ManyToOneAdapter) SetCtrlProxy(proxy *CtrlProxy) {

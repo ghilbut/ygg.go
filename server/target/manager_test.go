@@ -18,8 +18,8 @@ import (
 
 // var bytes = []byte{0x01, 0x02}
 
-func Test_Manager_notify_text(t *testing.T) {
-	log.Println("######## [Test_Manager_notify_text] ########")
+func Test_TargetManager_notify_text(t *testing.T) {
+	log.Println("######## [Test_TargetManager_notify_text] ########")
 
 	var ctrlA0 Connection = NewFakeConnection()
 	var ctrlA1 Connection = NewFakeConnection()
@@ -34,7 +34,7 @@ func Test_Manager_notify_text(t *testing.T) {
 	ctrlA0.BindDelegate(mockDelegate)
 	ctrlA1.BindDelegate(mockDelegate)
 
-	manager := NewManager()
+	manager := NewTargetManager()
 	manager.SetTargetConnection(target.(*FakeConnection).Other())
 	target.SendText(kTargetJson)
 
@@ -46,8 +46,8 @@ func Test_Manager_notify_text(t *testing.T) {
 	target.SendText(kText)
 }
 
-func Test_Manager_recv_text(t *testing.T) {
-	log.Println("######## [Test_Manager_recv_text] ########")
+func Test_TargetManager_recv_text(t *testing.T) {
+	log.Println("######## [Test_TargetManager_recv_text] ########")
 
 	var ctrlA0 Connection = NewFakeConnection()
 	var ctrlA1 Connection = NewFakeConnection()
@@ -60,7 +60,7 @@ func Test_Manager_recv_text(t *testing.T) {
 	mockDelegate.EXPECT().OnText(target, kText).Times(2)
 	target.BindDelegate(mockDelegate)
 
-	manager := NewManager()
+	manager := NewTargetManager()
 	manager.SetTargetConnection(target.(*FakeConnection).Other())
 	target.SendText(kTargetJson)
 

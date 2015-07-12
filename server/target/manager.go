@@ -6,24 +6,30 @@ import (
 	"log"
 )
 
-type Manager struct {
-	ctrlReady   *CtrlReady
-	targetReady *TargetReady
-	adapters    map[string]Adapter
+type TargetManager struct {
+	TargetReadyDelegate
+
+	ctrlReady         *CtrlReady
+	targetReady       *TargetReady
+	endpointToAdapter map[string]Adapter
+	adapterToEndpoint map[Adapter]string
 }
 
-func NewManager() *Manager {
+func NewTargetManager() *TargetManager {
 
-	manager := &Manager{
-		ctrlReady:   NewCtrlReady(),
-		targetReady: NewTargetReady(),
-		adapters:    make(map[string]Adapter),
+	manager := &TargetManager{
+		ctrlReady:         NewCtrlReady(),
+		targetReady:       NewTargetReady(),
+		endpointToAdapter: make(map[string]Adapter),
+		adapterToEndpoint: make(map[Adapter]string),
 	}
+
+	manager.targetReady.Delegate = manager
 
 	manager.ctrlReady.OnCtrlReadyProc = func(proxy *CtrlProxy) {
 		log.Println("======== [][OnCtrlReadyProc] ========")
 
-		adapter, ok := manager.adapters[proxy.Desc.Endpoint]
+		adapter, ok := manager.endpointToAdapter[proxy.Desc.Endpoint]
 		if !ok {
 			proxy.Close()
 			return
@@ -33,38 +39,69 @@ func NewManager() *Manager {
 		proxy.Close()
 	}
 
-	manager.targetReady.OnTargetReadyProc = func(proxy *TargetProxy) {
-		log.Println("======== [][OnTargetReadyProc] ========")
-
-		adapter := NewManyToOneAdapter(proxy)
-		if adapter == nil {
-			proxy.Close()
-			return
-		}
-
-		endpoint := proxy.Desc.Endpoint
-
-		if _, ok := manager.adapters[endpoint]; ok {
-			//adapter.Close()
-			return
-		}
-
-		manager.adapters[endpoint] = adapter
-	}
-
 	return manager
 }
 
-func (self *Manager) SetCtrlConnection(conn Connection) {
-	log.Println("======== [Manager][SetCtrlConnection] ========")
+func (self *TargetManager) SetCtrlConnection(conn Connection) {
+	log.Println("======== [TargetManager][SetCtrlConnection] ========")
 
 	assert.True(conn != nil)
 	self.ctrlReady.SetConnection(conn)
 }
 
-func (self *Manager) SetTargetConnection(conn Connection) {
-	log.Println("======== [Manager][SetTargetConnection] ========")
+func (self *TargetManager) SetTargetConnection(conn Connection) {
+	log.Println("======== [TargetManager][SetTargetConnection] ========")
 
 	assert.True(conn != nil)
 	self.targetReady.SetConnection(conn)
+}
+
+func (self *TargetManager) HasAdapter(adapter Adapter) bool {
+	log.Println("======== [TargetManager][HasAdapter] ========")
+	assert.True(adapter != nil)
+
+	endpoint, ok := self.adapterToEndpoint[adapter]
+	_, check := self.endpointToAdapter[endpoint]
+	assert.True(ok == check)
+	return ok
+}
+
+func (self *TargetManager) HasEndpoint(endpoint string) bool {
+	log.Println("======== [TargetManager][HasEndpoint] ========")
+
+	adapter, ok := self.endpointToAdapter[endpoint]
+	_, check := self.adapterToEndpoint[adapter]
+	assert.True(ok == check)
+	return ok
+}
+
+func (self *TargetManager) OnTargetProxy(proxy *TargetProxy) {
+	log.Println("======== [TargetManager][OnTargetReadyProc] ========")
+
+	adapter := NewManyToOneAdapter(proxy)
+	if adapter == nil {
+		proxy.Close()
+		return
+	}
+
+	endpoint := proxy.Desc.Endpoint
+
+	if _, ok := self.endpointToAdapter[endpoint]; ok {
+		//adapter.Close()
+		return
+	}
+
+	self.endpointToAdapter[endpoint] = adapter
+	self.adapterToEndpoint[adapter] = endpoint
+	adapter.BindDelegate(self)
+}
+
+func (self *TargetManager) OnAdapterClosed(adapter Adapter) {
+	log.Println("======== [TargetManager][OnAdapterClosed] ========")
+	assert.True(self.HasAdapter(adapter))
+
+	adapter.UnbindDelegate()
+	endpoint, _ := self.adapterToEndpoint[adapter]
+	delete(self.adapterToEndpoint, adapter)
+	delete(self.endpointToAdapter, endpoint)
 }

@@ -18,18 +18,6 @@ const kText = "Message"
 
 var kBytes = []byte{0x01, 0x02}
 
-func Test_ManyToOneAdapter_panic_if_target_is_nil_when_constructed(t *testing.T) {
-	log.Println("######## [Test_ManyToOneAdapter_panic_if_target_is_nil_when_constructed] ########")
-
-	defer func() {
-		if r := recover(); r == nil {
-			t.Fail()
-		}
-	}()
-
-	NewManyToOneAdapter(nil)
-}
-
 func Test_ManyToOneAdapter_target_notify_text_to_ctrls(t *testing.T) {
 	log.Println("######## [Test_ManyToOneAdapter_target_notify_text_to_ctrls] ########")
 
