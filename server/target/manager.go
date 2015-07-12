@@ -7,34 +7,33 @@ import (
 )
 
 type TargetManager struct {
+	ConnecteeDelegate
+	CtrlReadyDelegate
 	TargetReadyDelegate
 
+	connectee         Connectee
 	ctrlReady         *CtrlReady
 	targetReady       *TargetReady
 	endpointToAdapter map[string]Adapter
 	adapterToEndpoint map[Adapter]string
 }
 
-func NewTargetManager() *TargetManager {
+func NewTargetManager(connectee Connectee) *TargetManager {
 	log.Println("======== [TargetManager][NewTargetManager] ========")
+	assert.True(connectee != nil)
 
 	manager := &TargetManager{
+		connectee:         connectee,
 		ctrlReady:         NewCtrlReady(),
 		targetReady:       NewTargetReady(),
 		endpointToAdapter: make(map[string]Adapter),
 		adapterToEndpoint: make(map[Adapter]string),
 	}
 
+	manager.connectee.Start(manager)
 	manager.ctrlReady.Delegate = manager
 	manager.targetReady.Delegate = manager
 	return manager
-}
-
-func (self *TargetManager) SetCtrlConnection(conn Connection) {
-	log.Println("======== [TargetManager][SetCtrlConnection] ========")
-
-	assert.True(conn != nil)
-	self.ctrlReady.SetConnection(conn)
 }
 
 func (self *TargetManager) SetTargetConnection(conn Connection) {
@@ -63,6 +62,13 @@ func (self *TargetManager) HasEndpoint(endpoint string) bool {
 	return ok
 }
 
+func (self *TargetManager) OnCtrlConnected(conn Connection) {
+	log.Println("======== [TargetManager][OnCtrlConnected] ========")
+
+	assert.True(conn != nil)
+	self.ctrlReady.SetConnection(conn)
+}
+
 func (self *TargetManager) OnCtrlProxy(proxy *CtrlProxy) {
 	log.Println("======== [TargetManager][OnCtrlProxy] ========")
 
@@ -79,13 +85,18 @@ func (self *TargetManager) OnCtrlProxy(proxy *CtrlProxy) {
 func (self *TargetManager) OnTargetProxy(proxy *TargetProxy) {
 	log.Println("======== [TargetManager][OnTargetReadyProc] ========")
 
+	endpoint := proxy.Desc.Endpoint
+
+	if !self.connectee.Register(endpoint) {
+		proxy.Close()
+		return
+	}
+
 	adapter := NewManyToOneAdapter(proxy)
 	if adapter == nil {
 		proxy.Close()
 		return
 	}
-
-	endpoint := proxy.Desc.Endpoint
 
 	if _, ok := self.endpointToAdapter[endpoint]; ok {
 		//adapter.Close()
@@ -103,6 +114,7 @@ func (self *TargetManager) OnAdapterClosed(adapter Adapter) {
 
 	adapter.UnbindDelegate()
 	endpoint, _ := self.adapterToEndpoint[adapter]
+	self.connectee.Unregister(endpoint)
 	delete(self.adapterToEndpoint, adapter)
 	delete(self.endpointToAdapter, endpoint)
 }

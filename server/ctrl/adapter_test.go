@@ -42,7 +42,7 @@ func Test_OneToOneAdapter_close_ctrl(t *testing.T) {
 	target.BindDelegate(mockConnDelegate)
 
 	mockAdapterDelegate := NewMockAdapterDelegate(mockCtrl)
-	mockAdapterDelegate.EXPECT().OnClosed(adapter)
+	mockAdapterDelegate.EXPECT().OnAdapterClosed(adapter)
 	adapter.BindDelegate(mockAdapterDelegate)
 
 	ctrl.Close()
@@ -73,7 +73,7 @@ func Test_OneToOneAdapter_close_target(t *testing.T) {
 	target.BindDelegate(mockConnDelegate)
 
 	mockAdapterDelegate := NewMockAdapterDelegate(mockCtrl)
-	mockAdapterDelegate.EXPECT().OnClosed(adapter)
+	mockAdapterDelegate.EXPECT().OnAdapterClosed(adapter)
 	adapter.BindDelegate(mockAdapterDelegate)
 
 	target.Close()
@@ -104,7 +104,7 @@ func Test_OneToOneAdapter_close_adapter(t *testing.T) {
 	target.BindDelegate(mockConnDelegate)
 
 	mockAdapterDelegate := NewMockAdapterDelegate(mockCtrl)
-	mockAdapterDelegate.EXPECT().OnClosed(adapter)
+	mockAdapterDelegate.EXPECT().OnAdapterClosed(adapter)
 	adapter.BindDelegate(mockAdapterDelegate)
 
 	adapter.Close()

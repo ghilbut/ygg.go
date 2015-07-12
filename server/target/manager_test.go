@@ -4,6 +4,7 @@ import (
 	. "github.com/ghilbut/ygg.go/common"
 	. "github.com/ghilbut/ygg.go/server/target"
 	. "github.com/ghilbut/ygg.go/test/fake"
+	. "github.com/ghilbut/ygg.go/test/fake/server/target"
 	. "github.com/ghilbut/ygg.go/test/mock/common"
 	"github.com/golang/mock/gomock"
 	"log"
@@ -34,13 +35,14 @@ func Test_TargetManager_notify_text(t *testing.T) {
 	ctrlA0.BindDelegate(mockDelegate)
 	ctrlA1.BindDelegate(mockDelegate)
 
-	manager := NewTargetManager()
+	connectee := NewFakeConnectee()
+	manager := NewTargetManager(connectee)
 	manager.SetTargetConnection(target.(*FakeConnection).Other())
 	target.SendText(kTargetJson)
 
-	manager.SetCtrlConnection(ctrlA0.(*FakeConnection).Other())
+	connectee.SetConnection(ctrlA0.(*FakeConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	manager.SetCtrlConnection(ctrlA1.(*FakeConnection).Other())
+	connectee.SetConnection(ctrlA1.(*FakeConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	target.SendText(kText)
@@ -60,13 +62,14 @@ func Test_TargetManager_recv_text(t *testing.T) {
 	mockDelegate.EXPECT().OnText(target, kText).Times(2)
 	target.BindDelegate(mockDelegate)
 
-	manager := NewTargetManager()
+	connectee := NewFakeConnectee()
+	manager := NewTargetManager(connectee)
 	manager.SetTargetConnection(target.(*FakeConnection).Other())
 	target.SendText(kTargetJson)
 
-	manager.SetCtrlConnection(ctrlA0.(*FakeConnection).Other())
+	connectee.SetConnection(ctrlA0.(*FakeConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	manager.SetCtrlConnection(ctrlA1.(*FakeConnection).Other())
+	connectee.SetConnection(ctrlA1.(*FakeConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	ctrlA0.SendText(kText)
@@ -89,13 +92,14 @@ func Test_TargetManager_notify_binary(t *testing.T) {
 	ctrlA0.BindDelegate(mockDelegate)
 	ctrlA1.BindDelegate(mockDelegate)
 
-	manager := NewTargetManager()
+	connectee := NewFakeConnectee()
+	manager := NewTargetManager(connectee)
 	manager.SetTargetConnection(target.(*FakeConnection).Other())
 	target.SendText(kTargetJson)
 
-	manager.SetCtrlConnection(ctrlA0.(*FakeConnection).Other())
+	connectee.SetConnection(ctrlA0.(*FakeConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	manager.SetCtrlConnection(ctrlA1.(*FakeConnection).Other())
+	connectee.SetConnection(ctrlA1.(*FakeConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	target.SendBinary(kBytes)
@@ -115,13 +119,14 @@ func Test_TargetManager_recv_binary(t *testing.T) {
 	mockDelegate.EXPECT().OnBinary(target, kBytes).Times(2)
 	target.BindDelegate(mockDelegate)
 
-	manager := NewTargetManager()
+	connectee := NewFakeConnectee()
+	manager := NewTargetManager(connectee)
 	manager.SetTargetConnection(target.(*FakeConnection).Other())
 	target.SendText(kTargetJson)
 
-	manager.SetCtrlConnection(ctrlA0.(*FakeConnection).Other())
+	connectee.SetConnection(ctrlA0.(*FakeConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	manager.SetCtrlConnection(ctrlA1.(*FakeConnection).Other())
+	connectee.SetConnection(ctrlA1.(*FakeConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	ctrlA0.SendBinary(kBytes)
@@ -143,13 +148,14 @@ func Test_TargetManager_remove_adapter_when_target_is_closed(t *testing.T) {
 	ctrlA0.BindDelegate(mockDelegate)
 	ctrlA1.BindDelegate(mockDelegate)
 
-	manager := NewTargetManager()
+	connectee := NewFakeConnectee()
+	manager := NewTargetManager(connectee)
 	manager.SetTargetConnection(target.(*FakeConnection).Other())
 	target.SendText(kTargetJson)
 
-	manager.SetCtrlConnection(ctrlA0.(*FakeConnection).Other())
+	connectee.SetConnection(ctrlA0.(*FakeConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	manager.SetCtrlConnection(ctrlA1.(*FakeConnection).Other())
+	connectee.SetConnection(ctrlA1.(*FakeConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	target.Close()

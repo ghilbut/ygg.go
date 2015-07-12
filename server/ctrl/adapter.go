@@ -48,7 +48,7 @@ func NewOneToOneAdapter(proxy *TargetProxy) *OneToOneAdapter {
 		}
 
 		if adapter.delegate != nil {
-			adapter.delegate.OnClosed(adapter)
+			adapter.delegate.OnAdapterClosed(adapter)
 		}
 	}()
 
