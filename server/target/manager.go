@@ -42,6 +42,9 @@ func (self *TargetManager) Start() {
 func (self *TargetManager) Stop() {
 	self.connectee.Stop()
 
+	self.ctrlReady.Clear()
+	self.targetReady.Clear()
+
 	for _, adapter := range self.endpointToAdapter {
 		adapter.Close()
 	}
