@@ -92,7 +92,9 @@ func (self *OneToOneAdapter) OnCtrlText(proxy *CtrlProxy, text string) {
 	assert.True(proxy != nil)
 	assert.True(proxy == self.ctrl)
 
-	self.target.SendText(text)
+	if self.target != nil {
+		self.target.SendText(text)
+	}
 }
 
 func (self *OneToOneAdapter) OnCtrlBinary(proxy *CtrlProxy, bytes []byte) {
@@ -101,7 +103,9 @@ func (self *OneToOneAdapter) OnCtrlBinary(proxy *CtrlProxy, bytes []byte) {
 	assert.True(proxy != nil)
 	assert.True(proxy == self.ctrl)
 
-	self.target.SendBinary(bytes)
+	if self.target != nil {
+		self.target.SendBinary(bytes)
+	}
 }
 
 func (self *OneToOneAdapter) OnCtrlClosed(proxy *CtrlProxy) {
