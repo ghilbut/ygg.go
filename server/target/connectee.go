@@ -14,4 +14,5 @@ type Connectee interface {
 
 type ConnecteeDelegate interface {
 	OnCtrlConnected(conn Connection)
+	OnTargetConnected(conn Connection)
 }

@@ -74,12 +74,23 @@ func (self *FakeConnectee) HasEndpoint(endpoint string) bool {
 	return ok
 }
 
-func (self *FakeConnectee) SetConnection(conn Connection) {
-	log.Println("======== [FakeConnectee][SetConnection] ========")
+func (self *FakeConnectee) SetCtrlConnection(conn Connection) {
+	log.Println("======== [FakeConnectee][SetCtrlConnection] ========")
 	assert.True(conn != nil)
 
 	if self.delegate != nil {
 		self.delegate.OnCtrlConnected(conn)
+	} else {
+		conn.Close()
+	}
+}
+
+func (self *FakeConnectee) SetTargetConnection(conn Connection) {
+	log.Println("======== [FakeConnectee][SetTargetConnection] ========")
+	assert.True(conn != nil)
+
+	if self.delegate != nil {
+		self.delegate.OnTargetConnected(conn)
 	} else {
 		conn.Close()
 	}

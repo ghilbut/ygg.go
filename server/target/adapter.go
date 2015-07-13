@@ -27,33 +27,33 @@ func NewManyToOneAdapter(proxy *TargetProxy) *ManyToOneAdapter {
 		q:        make(chan bool),
 	}
 
-	go func() {
-		log.Println("======== [ManyToOneAdapter][Closing][Wait] ========")
+	if adapter != nil {
+		go adapter.quit()
+		adapter.target.Delegate = adapter
+	}
 
-		<-adapter.q
-		close(adapter.q)
-
-		log.Println("======== [ManyToOneAdapter][Closing][Continue] ========")
-
-		for ctrl := range adapter.ctrls {
-			delete(adapter.ctrls, ctrl)
-			ctrl.Delegate = nil
-			ctrl.Close()
-		}
-
-		if target := adapter.target; target != nil {
-			adapter.target = nil
-			target.Delegate = nil
-			target.Close()
-		}
-
-		if adapter.delegate != nil {
-			adapter.delegate.OnAdapterClosed(adapter)
-		}
-	}()
-
-	adapter.target.Delegate = adapter
 	return adapter
+}
+
+func (self *ManyToOneAdapter) quit() {
+	log.Println("======== [ManyToOneAdapter][quit][Wait] ========")
+
+	<-self.q
+	close(self.q)
+
+	log.Println("======== [ManyToOneAdapter][quit][Continue] ========")
+
+	for ctrl := range self.ctrls {
+		ctrl.Close()
+	}
+
+	if self.target != nil {
+		self.target.Close()
+	}
+
+	if self.delegate != nil {
+		self.delegate.OnAdapterClosed(self)
+	}
 }
 
 func (self *ManyToOneAdapter) BindDelegate(delegate AdapterDelegate) {
@@ -90,7 +90,7 @@ func (self *ManyToOneAdapter) HasCtrlProxy(proxy *CtrlProxy) bool {
 func (self *ManyToOneAdapter) Close() {
 	log.Println("======== [ManyToOneAdapter][Close] ========")
 
-	//	defer recover()
+	defer func() { recover() }()
 	self.q <- true
 }
 
@@ -118,6 +118,7 @@ func (self *ManyToOneAdapter) OnCtrlClosed(proxy *CtrlProxy) {
 	assert.True(proxy != nil)
 	assert.True(self.HasCtrlProxy(proxy))
 
+	proxy.Delegate = nil
 	delete(self.ctrls, proxy)
 }
 
@@ -149,5 +150,9 @@ func (self *ManyToOneAdapter) OnTargetClosed(proxy *TargetProxy) {
 	assert.True(proxy != nil)
 	assert.True(proxy == self.target)
 
+	self.target.Delegate = nil
+	self.target = nil
+
+	defer func() { recover() }()
 	self.q <- true
 }

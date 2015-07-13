@@ -30,17 +30,23 @@ func NewTargetManager(connectee Connectee) *TargetManager {
 		adapterToEndpoint: make(map[Adapter]string),
 	}
 
-	manager.connectee.Start(manager)
 	manager.ctrlReady.Delegate = manager
 	manager.targetReady.Delegate = manager
 	return manager
 }
 
-func (self *TargetManager) SetTargetConnection(conn Connection) {
-	log.Println("======== [TargetManager][SetTargetConnection] ========")
+func (self *TargetManager) Start() {
+	self.connectee.Start(self)
+}
 
-	assert.True(conn != nil)
-	self.targetReady.SetConnection(conn)
+func (self *TargetManager) Stop() {
+	self.connectee.Stop()
+
+	for _, adapter := range self.endpointToAdapter {
+		adapter.Close()
+	}
+
+	assert.True(len(self.adapterToEndpoint) == 0)
 }
 
 func (self *TargetManager) HasAdapter(adapter Adapter) bool {
@@ -69,6 +75,13 @@ func (self *TargetManager) OnCtrlConnected(conn Connection) {
 	self.ctrlReady.SetConnection(conn)
 }
 
+func (self *TargetManager) OnTargetConnected(conn Connection) {
+	log.Println("======== [TargetManager][OnTargetConnected] ========")
+
+	assert.True(conn != nil)
+	self.targetReady.SetConnection(conn)
+}
+
 func (self *TargetManager) OnCtrlProxy(proxy *CtrlProxy) {
 	log.Println("======== [TargetManager][OnCtrlProxy] ========")
 
@@ -83,13 +96,12 @@ func (self *TargetManager) OnCtrlProxy(proxy *CtrlProxy) {
 }
 
 func (self *TargetManager) OnTargetProxy(proxy *TargetProxy) {
-	log.Println("======== [TargetManager][OnTargetReadyProc] ========")
+	log.Println("======== [TargetManager][OnTargetProxy] ========")
 
 	endpoint := proxy.Desc.Endpoint
 
-	if !self.connectee.Register(endpoint) {
-		proxy.Close()
-		return
+	if adapter, ok := self.endpointToAdapter[endpoint]; ok {
+		adapter.Close()
 	}
 
 	adapter := NewManyToOneAdapter(proxy)
@@ -98,8 +110,8 @@ func (self *TargetManager) OnTargetProxy(proxy *TargetProxy) {
 		return
 	}
 
-	if _, ok := self.endpointToAdapter[endpoint]; ok {
-		//adapter.Close()
+	if !self.connectee.Register(endpoint) {
+		proxy.Close()
 		return
 	}
 

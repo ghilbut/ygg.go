@@ -102,3 +102,11 @@ func (_m *MockConnecteeDelegate) OnCtrlConnected(conn Connection) {
 func (_mr *_MockConnecteeDelegateRecorder) OnCtrlConnected(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnCtrlConnected", arg0)
 }
+
+func (_m *MockConnecteeDelegate) OnTargetConnected(conn Connection) {
+	_m.ctrl.Call(_m, "OnTargetConnected", conn)
+}
+
+func (_mr *_MockConnecteeDelegateRecorder) OnTargetConnected(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "OnTargetConnected", arg0)
+}

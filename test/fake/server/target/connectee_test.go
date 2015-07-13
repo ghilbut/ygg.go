@@ -19,6 +19,9 @@ type _NullConnecteeDelegate struct {
 func (self *_NullConnecteeDelegate) OnCtrlConnected(conn Connection) {
 }
 
+func (self *_NullConnecteeDelegate) OnTargetConnected(conn Connection) {
+}
+
 func Test_FakeConnectee_return_false_when_register_before_started(t *testing.T) {
 	log.Println("######## [Test_FakeConnectee_return_false_when_register_failed_before_started] ########")
 
@@ -116,24 +119,30 @@ func Test_FakeConnectee_delegate_connection_when_set_connection(t *testing.T) {
 
 	mockDelegate := NewMockConnecteeDelegate(mockCtrl)
 	mockDelegate.EXPECT().OnCtrlConnected(conn)
+	mockDelegate.EXPECT().OnTargetConnected(conn)
 
 	connectee := NewFakeConnectee()
 	connectee.Start(mockDelegate)
-	connectee.SetConnection(conn)
+	connectee.SetCtrlConnection(conn)
+	connectee.SetTargetConnection(conn)
 }
 
 func Test_FakeConnectee_close_connection_when_not_started(t *testing.T) {
 	log.Println("######## [Test_FakeConnectee_close_connection_when_not_started] ########")
 
-	conn := NewFakeConnection()
+	ctrl := NewFakeConnection()
+	target := NewFakeConnection()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
 	mockDelegate := NewMockConnectionDelegate(mockCtrl)
-	mockDelegate.EXPECT().OnClosed(conn)
-	conn.BindDelegate(mockDelegate)
+	mockDelegate.EXPECT().OnClosed(ctrl)
+	mockDelegate.EXPECT().OnClosed(target)
+	ctrl.BindDelegate(mockDelegate)
+	target.BindDelegate(mockDelegate)
 
 	connectee := NewFakeConnectee()
-	connectee.SetConnection(conn)
+	connectee.SetCtrlConnection(ctrl)
+	connectee.SetTargetConnection(target)
 }
