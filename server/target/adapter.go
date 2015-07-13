@@ -72,7 +72,7 @@ func (self *ManyToOneAdapter) SetCtrlProxy(proxy *CtrlProxy) {
 	log.Println("======== [ManyToOneAdapter][SetCtrlProxy] ========")
 
 	assert.True(proxy != nil)
-	assert.False(self.HasCtrlProxy(proxy))
+	assert.True(!self.HasCtrlProxy(proxy))
 
 	self.ctrls[proxy] = true
 	proxy.Delegate = self

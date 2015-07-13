@@ -27,39 +27,46 @@ func NewOneToOneAdapter(proxy *TargetProxy) *OneToOneAdapter {
 		q:        make(chan bool),
 	}
 
-	go func() {
-		log.Println("======== [OneToOneAdapter][Closing][Wait] ========")
-
-		<-adapter.q
-		close(adapter.q)
-
-		log.Println("======== [OneToOneAdapter][Closing][Continue] ========")
-
-		if ctrl := adapter.ctrl; ctrl != nil {
-			adapter.ctrl = nil
-			ctrl.Delegate = nil
-			ctrl.Close()
-		}
-
-		if target := adapter.target; target != nil {
-			adapter.target = nil
-			target.Delegate = nil
-			target.Close()
-		}
-
-		if adapter.delegate != nil {
-			adapter.delegate.OnAdapterClosed(adapter)
-		}
-	}()
+	if adapter != nil {
+		go adapter.quit()
+		adapter.target.Delegate = adapter
+	}
 
 	adapter.target.Delegate = adapter
 	return adapter
+}
+
+func (self *OneToOneAdapter) quit() {
+	log.Println("======== [OneToOneAdapter][quit][Wait] ========")
+
+	<-self.q
+	close(self.q)
+
+	log.Println("======== [OneToOneAdapter][quit][Continue] ========")
+
+	if self.ctrl != nil {
+		self.ctrl.Close()
+	}
+
+	if self.target != nil {
+		self.target.Close()
+	}
+
+	if self.delegate != nil {
+		self.delegate.OnAdapterClosed(self)
+	}
 }
 
 func (self *OneToOneAdapter) BindDelegate(delegate AdapterDelegate) {
 	log.Println("======== [OneToOneAdapter][BindDelegate] ========")
 
 	self.delegate = delegate
+}
+
+func (self *OneToOneAdapter) UnbindDelegate() {
+	log.Println("======== [OneToOneAdapter][UnbindDelegate] ========")
+
+	self.delegate = nil
 }
 
 func (self *OneToOneAdapter) SetCtrlProxy(proxy *CtrlProxy) {
@@ -75,7 +82,7 @@ func (self *OneToOneAdapter) SetCtrlProxy(proxy *CtrlProxy) {
 func (self *OneToOneAdapter) Close() {
 	log.Println("======== [OneToOneAdapter][Close] ========")
 
-	defer recover()
+	defer func() { recover() }()
 	self.q <- true
 }
 
@@ -85,9 +92,7 @@ func (self *OneToOneAdapter) OnCtrlText(proxy *CtrlProxy, text string) {
 	assert.True(proxy != nil)
 	assert.True(proxy == self.ctrl)
 
-	if self.target != nil {
-		self.target.SendText(text)
-	}
+	self.target.SendText(text)
 }
 
 func (self *OneToOneAdapter) OnCtrlBinary(proxy *CtrlProxy, bytes []byte) {
@@ -96,9 +101,7 @@ func (self *OneToOneAdapter) OnCtrlBinary(proxy *CtrlProxy, bytes []byte) {
 	assert.True(proxy != nil)
 	assert.True(proxy == self.ctrl)
 
-	if self.target != nil {
-		self.target.SendBinary(bytes)
-	}
+	self.target.SendBinary(bytes)
 }
 
 func (self *OneToOneAdapter) OnCtrlClosed(proxy *CtrlProxy) {
@@ -109,7 +112,8 @@ func (self *OneToOneAdapter) OnCtrlClosed(proxy *CtrlProxy) {
 
 	self.ctrl.Delegate = nil
 	self.ctrl = nil
-	defer recover()
+
+	defer func() { recover() }()
 	self.q <- true
 }
 
@@ -143,6 +147,7 @@ func (self *OneToOneAdapter) OnTargetClosed(proxy *TargetProxy) {
 
 	self.target.Delegate = nil
 	self.target = nil
-	defer recover()
+
+	defer func() { recover() }()
 	self.q <- true
 }
