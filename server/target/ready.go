@@ -18,7 +18,7 @@ type TargetReadyDelegate interface {
 }
 
 func NewTargetReady() *TargetReady {
-	log.Printf("======== [TargetReady][NewTargetReady] ========")
+	log.Printf("======== [target.TargetReady][NewTargetReady] ========")
 
 	ready := &TargetReady{
 		readys:   make(map[Connection]bool),
@@ -29,7 +29,8 @@ func NewTargetReady() *TargetReady {
 }
 
 func (self *TargetReady) SetConnection(conn Connection) {
-	log.Printf("======== [TargetReady][SetConnection] ========")
+	log.Printf("======== [target.TargetReady][SetConnection] ========")
+	assert.True(conn != nil)
 	assert.True(!self.HasConnection(conn))
 
 	self.readys[conn] = true
@@ -37,7 +38,7 @@ func (self *TargetReady) SetConnection(conn Connection) {
 }
 
 func (self *TargetReady) HasConnection(conn Connection) bool {
-	log.Printf("======== [TargetReady][HasConnection] ========")
+	log.Printf("======== [target.TargetReady][HasConnection] ========")
 	assert.True(conn != nil)
 
 	_, ok := self.readys[conn]
@@ -45,7 +46,7 @@ func (self *TargetReady) HasConnection(conn Connection) bool {
 }
 
 func (self *TargetReady) Clear() {
-	log.Printf("======== [TargetReady][Clear] ========")
+	log.Printf("======== [target.TargetReady][Clear] ========")
 
 	for conn, _ := range self.readys {
 		conn.Close()
@@ -53,7 +54,7 @@ func (self *TargetReady) Clear() {
 }
 
 func (self *TargetReady) OnText(conn Connection, text string) {
-	log.Printf("======== [TargetReady][OnText] ========")
+	log.Printf("======== [target.TargetReady][OnText] ========")
 	assert.True(self.HasConnection(conn))
 	assert.True(self.Delegate != nil)
 
@@ -77,12 +78,12 @@ func (self *TargetReady) OnText(conn Connection, text string) {
 }
 
 func (self *TargetReady) OnBinary(conn Connection, bytes []byte) {
-	log.Printf("======== [TargetReady][OnBinary] ========")
+	log.Printf("======== [target.TargetReady][OnBinary] ========")
 	assert.True(false)
 }
 
 func (self *TargetReady) OnClosed(conn Connection) {
-	log.Printf("======== [TargetReady][OnClosed] ========")
+	log.Printf("======== [target.TargetReady][OnClosed] ========")
 	assert.True(self.HasConnection(conn))
 
 	delete(self.readys, conn)
