@@ -2,8 +2,8 @@ package target_test
 
 import (
 	. "github.com/ghilbut/ygg.go/common"
+	. "github.com/ghilbut/ygg.go/net"
 	. "github.com/ghilbut/ygg.go/server/target"
-	. "github.com/ghilbut/ygg.go/test/fake"
 	. "github.com/ghilbut/ygg.go/test/fake/server/target"
 	. "github.com/ghilbut/ygg.go/test/mock/common"
 	"github.com/golang/mock/gomock"
@@ -22,9 +22,9 @@ import (
 func Test_TargetManager_notify_text(t *testing.T) {
 	log.Println("######## [Test_TargetManager_notify_text] ########")
 
-	var ctrlA0 Connection = NewFakeConnection()
-	var ctrlA1 Connection = NewFakeConnection()
-	var target Connection = NewFakeConnection()
+	var ctrlA0 Connection = NewLocalConnection()
+	var ctrlA1 Connection = NewLocalConnection()
+	var target Connection = NewLocalConnection()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -40,12 +40,12 @@ func Test_TargetManager_notify_text(t *testing.T) {
 	connectee.Delegate = manager
 	connectee.Start()
 
-	connectee.SetTargetConnection(target.(*FakeConnection).Other())
+	connectee.SetTargetConnection(target.(*LocalConnection).Other())
 	target.SendText(kTargetJson)
 
-	connectee.SetCtrlConnection(ctrlA0.(*FakeConnection).Other())
+	connectee.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	connectee.SetCtrlConnection(ctrlA1.(*FakeConnection).Other())
+	connectee.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	target.SendText(kText)
@@ -54,9 +54,9 @@ func Test_TargetManager_notify_text(t *testing.T) {
 func Test_TargetManager_recv_text(t *testing.T) {
 	log.Println("######## [Test_TargetManager_recv_text] ########")
 
-	var ctrlA0 Connection = NewFakeConnection()
-	var ctrlA1 Connection = NewFakeConnection()
-	var target Connection = NewFakeConnection()
+	var ctrlA0 Connection = NewLocalConnection()
+	var ctrlA1 Connection = NewLocalConnection()
+	var target Connection = NewLocalConnection()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -70,12 +70,12 @@ func Test_TargetManager_recv_text(t *testing.T) {
 	connectee.Delegate = manager
 	connectee.Start()
 
-	connectee.SetTargetConnection(target.(*FakeConnection).Other())
+	connectee.SetTargetConnection(target.(*LocalConnection).Other())
 	target.SendText(kTargetJson)
 
-	connectee.SetCtrlConnection(ctrlA0.(*FakeConnection).Other())
+	connectee.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	connectee.SetCtrlConnection(ctrlA1.(*FakeConnection).Other())
+	connectee.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	ctrlA0.SendText(kText)
@@ -85,9 +85,9 @@ func Test_TargetManager_recv_text(t *testing.T) {
 func Test_TargetManager_notify_binary(t *testing.T) {
 	log.Println("######## [Test_TargetManager_notify_binary] ########")
 
-	var ctrlA0 Connection = NewFakeConnection()
-	var ctrlA1 Connection = NewFakeConnection()
-	var target Connection = NewFakeConnection()
+	var ctrlA0 Connection = NewLocalConnection()
+	var ctrlA1 Connection = NewLocalConnection()
+	var target Connection = NewLocalConnection()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -103,12 +103,12 @@ func Test_TargetManager_notify_binary(t *testing.T) {
 	connectee.Delegate = manager
 	connectee.Start()
 
-	connectee.SetTargetConnection(target.(*FakeConnection).Other())
+	connectee.SetTargetConnection(target.(*LocalConnection).Other())
 	target.SendText(kTargetJson)
 
-	connectee.SetCtrlConnection(ctrlA0.(*FakeConnection).Other())
+	connectee.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	connectee.SetCtrlConnection(ctrlA1.(*FakeConnection).Other())
+	connectee.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	target.SendBinary(kBytes)
@@ -117,9 +117,9 @@ func Test_TargetManager_notify_binary(t *testing.T) {
 func Test_TargetManager_recv_binary(t *testing.T) {
 	log.Println("######## [Test_TargetManager_recv_binary] ########")
 
-	var ctrlA0 Connection = NewFakeConnection()
-	var ctrlA1 Connection = NewFakeConnection()
-	var target Connection = NewFakeConnection()
+	var ctrlA0 Connection = NewLocalConnection()
+	var ctrlA1 Connection = NewLocalConnection()
+	var target Connection = NewLocalConnection()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -133,12 +133,12 @@ func Test_TargetManager_recv_binary(t *testing.T) {
 	connectee.Delegate = manager
 	connectee.Start()
 
-	connectee.SetTargetConnection(target.(*FakeConnection).Other())
+	connectee.SetTargetConnection(target.(*LocalConnection).Other())
 	target.SendText(kTargetJson)
 
-	connectee.SetCtrlConnection(ctrlA0.(*FakeConnection).Other())
+	connectee.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	connectee.SetCtrlConnection(ctrlA1.(*FakeConnection).Other())
+	connectee.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	ctrlA0.SendBinary(kBytes)
@@ -148,9 +148,9 @@ func Test_TargetManager_recv_binary(t *testing.T) {
 func Test_TargetManager_remove_adapter_when_target_is_closed(t *testing.T) {
 	log.Println("######## [Test_TargetManager_remove_adapter_when_target_is_closed] ########")
 
-	var ctrlA0 Connection = NewFakeConnection()
-	var ctrlA1 Connection = NewFakeConnection()
-	var target Connection = NewFakeConnection()
+	var ctrlA0 Connection = NewLocalConnection()
+	var ctrlA1 Connection = NewLocalConnection()
+	var target Connection = NewLocalConnection()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -165,12 +165,12 @@ func Test_TargetManager_remove_adapter_when_target_is_closed(t *testing.T) {
 	connectee.Delegate = manager
 	connectee.Start()
 
-	connectee.SetTargetConnection(target.(*FakeConnection).Other())
+	connectee.SetTargetConnection(target.(*LocalConnection).Other())
 	target.SendText(kTargetJson)
 
-	connectee.SetCtrlConnection(ctrlA0.(*FakeConnection).Other())
+	connectee.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	connectee.SetCtrlConnection(ctrlA1.(*FakeConnection).Other())
+	connectee.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	target.Close()
@@ -183,8 +183,8 @@ func Test_TargetManager_remove_adapter_when_target_is_closed(t *testing.T) {
 func Test_TargetManager_remove_adapter_when_set_endpoint_which_alreay_exists(t *testing.T) {
 	log.Println("######## [Test_TargetManager_remove_adapter_when_set_endpoint_which_alreay_exists] ########")
 
-	var target0 Connection = NewFakeConnection()
-	var target1 Connection = NewFakeConnection()
+	var target0 Connection = NewLocalConnection()
+	var target1 Connection = NewLocalConnection()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -200,19 +200,19 @@ func Test_TargetManager_remove_adapter_when_set_endpoint_which_alreay_exists(t *
 	connectee.Delegate = manager
 	connectee.Start()
 
-	connectee.SetTargetConnection(target0.(*FakeConnection).Other())
+	connectee.SetTargetConnection(target0.(*LocalConnection).Other())
 	target0.SendText(kTargetJson)
 
-	connectee.SetTargetConnection(target1.(*FakeConnection).Other())
+	connectee.SetTargetConnection(target1.(*LocalConnection).Other())
 	target1.SendText(kTargetJson)
 }
 
 func Test_TargetManager_remove_adapter_when_manager_is_stopped(t *testing.T) {
 	log.Println("######## [Test_TargetManager_remove_adapter_when_target_is_stopped] ########")
 
-	var ctrlA0 Connection = NewFakeConnection()
-	var ctrlA1 Connection = NewFakeConnection()
-	var target Connection = NewFakeConnection()
+	var ctrlA0 Connection = NewLocalConnection()
+	var ctrlA1 Connection = NewLocalConnection()
+	var target Connection = NewLocalConnection()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -230,12 +230,12 @@ func Test_TargetManager_remove_adapter_when_manager_is_stopped(t *testing.T) {
 	connectee.Delegate = manager
 	connectee.Start()
 
-	connectee.SetTargetConnection(target.(*FakeConnection).Other())
+	connectee.SetTargetConnection(target.(*LocalConnection).Other())
 	target.SendText(kTargetJson)
 
-	connectee.SetCtrlConnection(ctrlA0.(*FakeConnection).Other())
+	connectee.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	connectee.SetCtrlConnection(ctrlA1.(*FakeConnection).Other())
+	connectee.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	connectee.Stop()

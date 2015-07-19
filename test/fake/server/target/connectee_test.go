@@ -2,8 +2,8 @@ package fake_test
 
 import (
 	. "github.com/ghilbut/ygg.go/common"
+	. "github.com/ghilbut/ygg.go/net"
 	. "github.com/ghilbut/ygg.go/server/target"
-	. "github.com/ghilbut/ygg.go/test/fake"
 	. "github.com/ghilbut/ygg.go/test/fake/server/target"
 	. "github.com/ghilbut/ygg.go/test/mock/common"
 	. "github.com/ghilbut/ygg.go/test/mock/server/target"
@@ -31,7 +31,7 @@ func (self *_NullConnecteeDelegate) OnTargetConnected(c Connection) {
 func Test_FakeConnectee_return_false_when_register_before_started(t *testing.T) {
 	log.Println("######## [Test_FakeConnectee_return_false_when_register_failed_before_started] ########")
 
-	var connectee Connectee = NewFakeConnectee()
+	connectee := NewFakeConnectee()
 
 	if connectee.Register("A") {
 		t.Fail()
@@ -120,7 +120,7 @@ func Test_FakeConnectee_unregister(t *testing.T) {
 func Test_FakeConnectee_delegate_connection_when_set_connection(t *testing.T) {
 	log.Println("######## [Test_FakeConnectee_delegate_connection_when_set_connection] ########")
 
-	conn := NewFakeConnection()
+	conn := NewLocalConnection()
 
 	connectee := NewFakeConnectee()
 
@@ -142,8 +142,8 @@ func Test_FakeConnectee_delegate_connection_when_set_connection(t *testing.T) {
 func Test_FakeConnectee_close_connection_when_not_started(t *testing.T) {
 	log.Println("######## [Test_FakeConnectee_close_connection_when_not_started] ########")
 
-	ctrl := NewFakeConnection()
-	target := NewFakeConnection()
+	ctrl := NewLocalConnection()
+	target := NewLocalConnection()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()

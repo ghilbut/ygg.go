@@ -1,17 +1,17 @@
-package fake_test
+package net_test
 
 import (
 	. "github.com/ghilbut/ygg.go/common"
-	. "github.com/ghilbut/ygg.go/test/fake"
-	"github.com/ghilbut/ygg.go/test/mock/common"
+	. "github.com/ghilbut/ygg.go/net"
+	. "github.com/ghilbut/ygg.go/test/mock/common"
 	"github.com/golang/mock/gomock"
 	"testing"
 )
 
-func Test_fake_connector_has_pair(t *testing.T) {
+func Test_LocalConnection_has_pair(t *testing.T) {
 
-	var lhs Connection = NewFakeConnection()
-	var rhs Connection = lhs.(*FakeConnection).Other()
+	var lhs Connection = NewLocalConnection()
+	var rhs Connection = lhs.(*LocalConnection).Other()
 
 	if lhs == nil {
 		t.Fail()
@@ -22,15 +22,15 @@ func Test_fake_connector_has_pair(t *testing.T) {
 	}
 }
 
-func Test_send_text(t *testing.T) {
+func Test_LocalConnection_send_text(t *testing.T) {
 
-	var lhs Connection = NewFakeConnection()
-	var rhs Connection = lhs.(*FakeConnection).Other()
+	var lhs Connection = NewLocalConnection()
+	var rhs Connection = lhs.(*LocalConnection).Other()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	mockDelegate := mock.NewMockConnectionDelegate(mockCtrl)
+	mockDelegate := NewMockConnectionDelegate(mockCtrl)
 	mockDelegate.EXPECT().OnText(rhs, "A").Times(2)
 
 	rhs.BindDelegate(mockDelegate)
@@ -43,15 +43,15 @@ func Test_send_text(t *testing.T) {
 	lhs.SendText("A")
 }
 
-func Test_recv_text(t *testing.T) {
+func Test_LocalConnection_recv_text(t *testing.T) {
 
-	var lhs Connection = NewFakeConnection()
-	var rhs Connection = lhs.(*FakeConnection).Other()
+	var lhs Connection = NewLocalConnection()
+	var rhs Connection = lhs.(*LocalConnection).Other()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	mockDelegate := mock.NewMockConnectionDelegate(mockCtrl)
+	mockDelegate := NewMockConnectionDelegate(mockCtrl)
 	mockDelegate.EXPECT().OnText(lhs, "A").Times(2)
 
 	lhs.BindDelegate(mockDelegate)
@@ -64,15 +64,15 @@ func Test_recv_text(t *testing.T) {
 	rhs.SendText("A")
 }
 
-func Test_send_binary(t *testing.T) {
+func Test_LocalConnection_send_binary(t *testing.T) {
 
-	var lhs Connection = NewFakeConnection()
-	var rhs Connection = lhs.(*FakeConnection).Other()
+	var lhs Connection = NewLocalConnection()
+	var rhs Connection = lhs.(*LocalConnection).Other()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	mockDelegate := mock.NewMockConnectionDelegate(mockCtrl)
+	mockDelegate := NewMockConnectionDelegate(mockCtrl)
 	mockDelegate.EXPECT().OnBinary(rhs, []byte{0x01, 0x02}).Times(2)
 
 	rhs.BindDelegate(mockDelegate)
@@ -85,15 +85,15 @@ func Test_send_binary(t *testing.T) {
 	lhs.SendBinary([]byte{0x01, 0x02})
 }
 
-func Test_recv_binary(t *testing.T) {
+func Test_LocalConnection_recv_binary(t *testing.T) {
 
-	var lhs Connection = NewFakeConnection()
-	var rhs Connection = lhs.(*FakeConnection).Other()
+	var lhs Connection = NewLocalConnection()
+	var rhs Connection = lhs.(*LocalConnection).Other()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	mockDelegate := mock.NewMockConnectionDelegate(mockCtrl)
+	mockDelegate := NewMockConnectionDelegate(mockCtrl)
 	mockDelegate.EXPECT().OnBinary(lhs, []byte{0x01, 0x02}).Times(2)
 
 	lhs.BindDelegate(mockDelegate)
@@ -106,15 +106,15 @@ func Test_recv_binary(t *testing.T) {
 	rhs.SendBinary([]byte{0x01, 0x02})
 }
 
-func Test_close(t *testing.T) {
+func Test_LocalConnection_close(t *testing.T) {
 
-	var lhs Connection = NewFakeConnection()
-	var rhs Connection = lhs.(*FakeConnection).Other()
+	var lhs Connection = NewLocalConnection()
+	var rhs Connection = lhs.(*LocalConnection).Other()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	mockDelegate := mock.NewMockConnectionDelegate(mockCtrl)
+	mockDelegate := NewMockConnectionDelegate(mockCtrl)
 	mockDelegate.EXPECT().OnClosed(lhs).Times(2)
 	mockDelegate.EXPECT().OnClosed(rhs).Times(2)
 
@@ -131,15 +131,15 @@ func Test_close(t *testing.T) {
 	lhs.Close()
 }
 
-func Test_closed(t *testing.T) {
+func Test_LocalConnection_closed(t *testing.T) {
 
-	var lhs Connection = NewFakeConnection()
-	var rhs Connection = lhs.(*FakeConnection).Other()
+	var lhs Connection = NewLocalConnection()
+	var rhs Connection = lhs.(*LocalConnection).Other()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	mockDelegate := mock.NewMockConnectionDelegate(mockCtrl)
+	mockDelegate := NewMockConnectionDelegate(mockCtrl)
 	mockDelegate.EXPECT().OnClosed(lhs).Times(2)
 	mockDelegate.EXPECT().OnClosed(rhs).Times(2)
 

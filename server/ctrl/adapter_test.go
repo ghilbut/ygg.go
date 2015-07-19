@@ -2,8 +2,8 @@ package ctrl_test
 
 import (
 	. "github.com/ghilbut/ygg.go/common"
+	. "github.com/ghilbut/ygg.go/net"
 	. "github.com/ghilbut/ygg.go/server/ctrl"
-	. "github.com/ghilbut/ygg.go/test/fake"
 	. "github.com/ghilbut/ygg.go/test/mock/common"
 	"github.com/golang/mock/gomock"
 	"log"
@@ -20,14 +20,14 @@ var kBytes = []byte{0x01, 0x02}
 func Test_OneToOneAdapter_send_text(t *testing.T) {
 	log.Println("######## [Test_OneToOneAdapter_send_text] ########")
 
-	var ctrl Connection = NewFakeConnection()
-	var target Connection = NewFakeConnection()
+	var ctrl Connection = NewLocalConnection()
+	var target Connection = NewLocalConnection()
 
 	cdesc, _ := NewCtrlDesc(kCtrlJson)
-	cproxy := NewCtrlProxy(ctrl.(*FakeConnection).Other(), cdesc)
+	cproxy := NewCtrlProxy(ctrl.(*LocalConnection).Other(), cdesc)
 
 	tdesc, _ := NewTargetDesc(kTargetJson)
-	tproxy := NewTargetProxy(target.(*FakeConnection).Other(), tdesc)
+	tproxy := NewTargetProxy(target.(*LocalConnection).Other(), tdesc)
 
 	adapter := NewOneToOneAdapter(tproxy)
 	adapter.SetCtrlProxy(cproxy)
@@ -45,14 +45,14 @@ func Test_OneToOneAdapter_send_text(t *testing.T) {
 func Test_OneToOneAdapter_recv_text(t *testing.T) {
 	log.Println("######## [Test_OneToOneAdapter_recv_text] ########")
 
-	var ctrl Connection = NewFakeConnection()
-	var target Connection = NewFakeConnection()
+	var ctrl Connection = NewLocalConnection()
+	var target Connection = NewLocalConnection()
 
 	cdesc, _ := NewCtrlDesc(kCtrlJson)
-	cproxy := NewCtrlProxy(ctrl.(*FakeConnection).Other(), cdesc)
+	cproxy := NewCtrlProxy(ctrl.(*LocalConnection).Other(), cdesc)
 
 	tdesc, _ := NewTargetDesc(kTargetJson)
-	tproxy := NewTargetProxy(target.(*FakeConnection).Other(), tdesc)
+	tproxy := NewTargetProxy(target.(*LocalConnection).Other(), tdesc)
 
 	adapter := NewOneToOneAdapter(tproxy)
 	adapter.SetCtrlProxy(cproxy)
@@ -70,14 +70,14 @@ func Test_OneToOneAdapter_recv_text(t *testing.T) {
 func Test_OneToOneAdapter_send_binary(t *testing.T) {
 	log.Println("######## [Test_OneToOneAdapter_send_text] ########")
 
-	var ctrl Connection = NewFakeConnection()
-	var target Connection = NewFakeConnection()
+	var ctrl Connection = NewLocalConnection()
+	var target Connection = NewLocalConnection()
 
 	cdesc, _ := NewCtrlDesc(kCtrlJson)
-	cproxy := NewCtrlProxy(ctrl.(*FakeConnection).Other(), cdesc)
+	cproxy := NewCtrlProxy(ctrl.(*LocalConnection).Other(), cdesc)
 
 	tdesc, _ := NewTargetDesc(kTargetJson)
-	tproxy := NewTargetProxy(target.(*FakeConnection).Other(), tdesc)
+	tproxy := NewTargetProxy(target.(*LocalConnection).Other(), tdesc)
 
 	adapter := NewOneToOneAdapter(tproxy)
 	adapter.SetCtrlProxy(cproxy)
@@ -95,14 +95,14 @@ func Test_OneToOneAdapter_send_binary(t *testing.T) {
 func Test_OneToOneAdapter_recv_binary(t *testing.T) {
 	log.Println("######## [Test_OneToOneAdapter_recv_binary] ########")
 
-	var ctrl Connection = NewFakeConnection()
-	var target Connection = NewFakeConnection()
+	var ctrl Connection = NewLocalConnection()
+	var target Connection = NewLocalConnection()
 
 	cdesc, _ := NewCtrlDesc(kCtrlJson)
-	cproxy := NewCtrlProxy(ctrl.(*FakeConnection).Other(), cdesc)
+	cproxy := NewCtrlProxy(ctrl.(*LocalConnection).Other(), cdesc)
 
 	tdesc, _ := NewTargetDesc(kTargetJson)
-	tproxy := NewTargetProxy(target.(*FakeConnection).Other(), tdesc)
+	tproxy := NewTargetProxy(target.(*LocalConnection).Other(), tdesc)
 
 	adapter := NewOneToOneAdapter(tproxy)
 	adapter.SetCtrlProxy(cproxy)
@@ -120,14 +120,14 @@ func Test_OneToOneAdapter_recv_binary(t *testing.T) {
 func Test_OneToOneAdapter_close_ctrl(t *testing.T) {
 	log.Println("######## [Test_OneToOneAdapter_close_ctrl] ########")
 
-	var ctrl Connection = NewFakeConnection()
-	var target Connection = NewFakeConnection()
+	var ctrl Connection = NewLocalConnection()
+	var target Connection = NewLocalConnection()
 
 	cdesc, _ := NewCtrlDesc(kCtrlJson)
-	cproxy := NewCtrlProxy(ctrl.(*FakeConnection).Other(), cdesc)
+	cproxy := NewCtrlProxy(ctrl.(*LocalConnection).Other(), cdesc)
 
 	tdesc, _ := NewTargetDesc(kTargetJson)
-	tproxy := NewTargetProxy(target.(*FakeConnection).Other(), tdesc)
+	tproxy := NewTargetProxy(target.(*LocalConnection).Other(), tdesc)
 
 	adapter := NewOneToOneAdapter(tproxy)
 	adapter.SetCtrlProxy(cproxy)
@@ -151,14 +151,14 @@ func Test_OneToOneAdapter_close_ctrl(t *testing.T) {
 func Test_OneToOneAdapter_close_target(t *testing.T) {
 	log.Println("######## [Test_OneToOneAdapter_close_target] ########")
 
-	var ctrl Connection = NewFakeConnection()
-	var target Connection = NewFakeConnection()
+	var ctrl Connection = NewLocalConnection()
+	var target Connection = NewLocalConnection()
 
 	cdesc, _ := NewCtrlDesc(kCtrlJson)
-	cproxy := NewCtrlProxy(ctrl.(*FakeConnection).Other(), cdesc)
+	cproxy := NewCtrlProxy(ctrl.(*LocalConnection).Other(), cdesc)
 
 	tdesc, _ := NewTargetDesc(kTargetJson)
-	tproxy := NewTargetProxy(target.(*FakeConnection).Other(), tdesc)
+	tproxy := NewTargetProxy(target.(*LocalConnection).Other(), tdesc)
 
 	adapter := NewOneToOneAdapter(tproxy)
 	adapter.SetCtrlProxy(cproxy)
@@ -182,14 +182,14 @@ func Test_OneToOneAdapter_close_target(t *testing.T) {
 func Test_OneToOneAdapter_close_adapter(t *testing.T) {
 	log.Println("######## [Test_OneToOneAdapter_close_adapter] ########")
 
-	var ctrl Connection = NewFakeConnection()
-	var target Connection = NewFakeConnection()
+	var ctrl Connection = NewLocalConnection()
+	var target Connection = NewLocalConnection()
 
 	cdesc, _ := NewCtrlDesc(kCtrlJson)
-	cproxy := NewCtrlProxy(ctrl.(*FakeConnection).Other(), cdesc)
+	cproxy := NewCtrlProxy(ctrl.(*LocalConnection).Other(), cdesc)
 
 	tdesc, _ := NewTargetDesc(kTargetJson)
-	tproxy := NewTargetProxy(target.(*FakeConnection).Other(), tdesc)
+	tproxy := NewTargetProxy(target.(*LocalConnection).Other(), tdesc)
 
 	adapter := NewOneToOneAdapter(tproxy)
 	adapter.SetCtrlProxy(cproxy)

@@ -2,8 +2,8 @@ package target_test
 
 import (
 	. "github.com/ghilbut/ygg.go/common"
+	. "github.com/ghilbut/ygg.go/net"
 	. "github.com/ghilbut/ygg.go/server/target"
-	. "github.com/ghilbut/ygg.go/test/fake"
 	. "github.com/ghilbut/ygg.go/test/mock/common"
 	. "github.com/ghilbut/ygg.go/test/mock/server/target"
 	"github.com/golang/mock/gomock"
@@ -16,7 +16,7 @@ const kJson = "{ \"endpoint\": \"B\" }"
 func Test_TargetReady_has_connection_after_set_connection(t *testing.T) {
 	log.Println("######## [Test_TargetReady_has_connection_after_set_connection] ########")
 
-	var conn Connection = NewFakeConnection()
+	var conn Connection = NewLocalConnection()
 
 	ready := NewTargetReady()
 
@@ -34,9 +34,9 @@ func Test_TargetReady_has_connection_after_set_connection(t *testing.T) {
 func Test_TargetReady_clear_connection(t *testing.T) {
 	log.Println("######## [Test_TargetReady_clear_connection] ########")
 
-	var conn0 Connection = NewFakeConnection()
-	var conn1 Connection = NewFakeConnection()
-	var conn2 Connection = NewFakeConnection()
+	var conn0 Connection = NewLocalConnection()
+	var conn1 Connection = NewLocalConnection()
+	var conn2 Connection = NewLocalConnection()
 
 	ready := NewTargetReady()
 	ready.SetConnection(conn0)
@@ -61,7 +61,7 @@ func Test_TargetReady_clear_connection(t *testing.T) {
 func Test_TargetReady_remove_connection_when_it_is_closed(t *testing.T) {
 	log.Println("######## [Test_TargetReady_remove_connection_when_it_is_closed] ########")
 
-	var conn Connection = NewFakeConnection()
+	var conn Connection = NewLocalConnection()
 
 	ready := NewTargetReady()
 	ready.SetConnection(conn)
@@ -76,8 +76,8 @@ func Test_TargetReady_remove_connection_when_it_is_closed(t *testing.T) {
 func Test_TargetReady_remove_connection_when_invalid_json_is_passed(t *testing.T) {
 	log.Println("######## [Test_TargetReady_remove_connection_when_invalid_json_is_passed] ########")
 
-	var lhs Connection = NewFakeConnection()
-	var rhs = lhs.(*FakeConnection).Other()
+	var lhs Connection = NewLocalConnection()
+	var rhs = lhs.(*LocalConnection).Other()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -129,8 +129,8 @@ func (self *_matcher) String() string {
 func Test_TargetReady_ok(t *testing.T) {
 	log.Println("######## [Test_TargetReady_ok] ########")
 
-	var lhs Connection = NewFakeConnection()
-	var rhs Connection = lhs.(*FakeConnection).Other()
+	var lhs Connection = NewLocalConnection()
+	var rhs Connection = lhs.(*LocalConnection).Other()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()

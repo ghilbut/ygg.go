@@ -1,7 +1,7 @@
 package fake_test
 
 import (
-	. "github.com/ghilbut/ygg.go/test/fake"
+	. "github.com/ghilbut/ygg.go/net"
 	. "github.com/ghilbut/ygg.go/test/fake/server/ctrl"
 	. "github.com/ghilbut/ygg.go/test/mock/common"
 	. "github.com/ghilbut/ygg.go/test/mock/server/ctrl"
@@ -13,7 +13,7 @@ import (
 func Test_FakeConnectee_delegate_connection_when_set_connection(t *testing.T) {
 	log.Println("######## [Test_ctrl.FakeConnectee_delegate_connection_when_set_connection] ########")
 
-	conn := NewFakeConnection()
+	conn := NewLocalConnection()
 
 	connectee := NewFakeConnectee()
 
@@ -33,7 +33,7 @@ func Test_FakeConnectee_delegate_connection_when_set_connection(t *testing.T) {
 func Test_FakeConnectee_close_connection_when_not_started(t *testing.T) {
 	log.Println("######## [Test_ctrl.FakeConnectee_close_connection_when_not_started] ########")
 
-	ctrl := NewFakeConnection()
+	ctrl := NewLocalConnection()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()

@@ -2,7 +2,7 @@ package fake_test
 
 import (
 	. "github.com/ghilbut/ygg.go/common"
-	. "github.com/ghilbut/ygg.go/test/fake"
+	. "github.com/ghilbut/ygg.go/net"
 	. "github.com/ghilbut/ygg.go/test/fake/server/ctrl"
 	. "github.com/ghilbut/ygg.go/test/mock/common"
 	"github.com/golang/mock/gomock"
@@ -15,8 +15,8 @@ const kCtrlJson = "{ \"id\" : \"A\", \"endpoint\" : \"B\" }"
 func Test_FakeConnector_close_old_connection_if_set_same_endpoint_again(t *testing.T) {
 	log.Println("######## [Test_FakeConnector_close_old_connection_if_set_same_endpoint_again] ########")
 
-	conn0 := NewFakeConnection()
-	conn1 := NewFakeConnection()
+	conn0 := NewLocalConnection()
+	conn1 := NewLocalConnection()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -35,7 +35,7 @@ func Test_FakeConnector_close_old_connection_if_set_same_endpoint_again(t *testi
 func Test_FakeConnector_close_ctrl_and_return_nil_when_there_is_no_matching_endpoint(t *testing.T) {
 	log.Println("######## [Test_FakeConnector_close_ctrl_and_return_nil_when_there_is_no_matching_endpoint] ########")
 
-	conn := NewFakeConnection()
+	conn := NewLocalConnection()
 
 	desc, _ := NewCtrlDesc(kCtrlJson)
 	ctrl := NewCtrlProxy(conn, desc)
@@ -57,7 +57,7 @@ func Test_FakeConnector_close_ctrl_and_return_nil_when_there_is_no_matching_endp
 func Test_FakeConnector_return_connection_when_there_is_matching_endpoint(t *testing.T) {
 	log.Println("######## [Test_FakeConnector_return_connection_when_there_is_matching_endpoint] ########")
 
-	conn := NewFakeConnection()
+	conn := NewLocalConnection()
 
 	connector := NewFakeConnector()
 	connector.SetTargetConnection("B", conn)

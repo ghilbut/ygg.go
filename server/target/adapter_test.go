@@ -2,8 +2,8 @@ package target_test
 
 import (
 	. "github.com/ghilbut/ygg.go/common"
+	. "github.com/ghilbut/ygg.go/net"
 	. "github.com/ghilbut/ygg.go/server/target"
-	. "github.com/ghilbut/ygg.go/test/fake"
 	. "github.com/ghilbut/ygg.go/test/mock/common"
 	"github.com/golang/mock/gomock"
 	"log"
@@ -21,17 +21,17 @@ var kBytes = []byte{0x01, 0x02}
 func Test_ManyToOneAdapter_target_notify_text_to_ctrls(t *testing.T) {
 	log.Println("######## [Test_ManyToOneAdapter_target_notify_text_to_ctrls] ########")
 
-	var lhs0 Connection = NewFakeConnection()
-	var lhs1 Connection = NewFakeConnection()
-	var rhs Connection = NewFakeConnection()
+	var lhs0 Connection = NewLocalConnection()
+	var lhs1 Connection = NewLocalConnection()
+	var rhs Connection = NewLocalConnection()
 
 	c0desc, _ := NewCtrlDesc(kCtrlA0Json)
-	c0proxy := NewCtrlProxy(lhs0.(*FakeConnection).Other(), c0desc)
+	c0proxy := NewCtrlProxy(lhs0.(*LocalConnection).Other(), c0desc)
 	c1desc, _ := NewCtrlDesc(kCtrlA1Json)
-	c1proxy := NewCtrlProxy(lhs1.(*FakeConnection).Other(), c1desc)
+	c1proxy := NewCtrlProxy(lhs1.(*LocalConnection).Other(), c1desc)
 
 	tdesc, _ := NewTargetDesc(kTargetJson)
-	tproxy := NewTargetProxy(rhs.(*FakeConnection).Other(), tdesc)
+	tproxy := NewTargetProxy(rhs.(*LocalConnection).Other(), tdesc)
 
 	var adapter Adapter = NewManyToOneAdapter(tproxy)
 	adapter.SetCtrlProxy(c0proxy)
@@ -53,17 +53,17 @@ func Test_ManyToOneAdapter_target_notify_text_to_ctrls(t *testing.T) {
 func Test_ManyToOneAdapter_target_recv_text_from_ctrls(t *testing.T) {
 	log.Println("######## [Test_ManyToOneAdapter_target_recv_text_from_ctrls] ########")
 
-	var lhs0 Connection = NewFakeConnection()
-	var lhs1 Connection = NewFakeConnection()
-	var rhs Connection = NewFakeConnection()
+	var lhs0 Connection = NewLocalConnection()
+	var lhs1 Connection = NewLocalConnection()
+	var rhs Connection = NewLocalConnection()
 
 	c0desc, _ := NewCtrlDesc(kCtrlA0Json)
-	c0proxy := NewCtrlProxy(lhs0.(*FakeConnection).Other(), c0desc)
+	c0proxy := NewCtrlProxy(lhs0.(*LocalConnection).Other(), c0desc)
 	c1desc, _ := NewCtrlDesc(kCtrlA1Json)
-	c1proxy := NewCtrlProxy(lhs1.(*FakeConnection).Other(), c1desc)
+	c1proxy := NewCtrlProxy(lhs1.(*LocalConnection).Other(), c1desc)
 
 	tdesc, _ := NewTargetDesc(kTargetJson)
-	tproxy := NewTargetProxy(rhs.(*FakeConnection).Other(), tdesc)
+	tproxy := NewTargetProxy(rhs.(*LocalConnection).Other(), tdesc)
 
 	var adapter Adapter = NewManyToOneAdapter(tproxy)
 	adapter.SetCtrlProxy(c0proxy)
@@ -84,17 +84,17 @@ func Test_ManyToOneAdapter_target_recv_text_from_ctrls(t *testing.T) {
 func Test_ManyToOneAdapter_target_notify_binary_to_ctrls(t *testing.T) {
 	log.Println("######## [Test_ManyToOneAdapter_target_notify_binary_to_ctrls] ########")
 
-	var lhs0 Connection = NewFakeConnection()
-	var lhs1 Connection = NewFakeConnection()
-	var rhs Connection = NewFakeConnection()
+	var lhs0 Connection = NewLocalConnection()
+	var lhs1 Connection = NewLocalConnection()
+	var rhs Connection = NewLocalConnection()
 
 	c0desc, _ := NewCtrlDesc(kCtrlA0Json)
-	c0proxy := NewCtrlProxy(lhs0.(*FakeConnection).Other(), c0desc)
+	c0proxy := NewCtrlProxy(lhs0.(*LocalConnection).Other(), c0desc)
 	c1desc, _ := NewCtrlDesc(kCtrlA1Json)
-	c1proxy := NewCtrlProxy(lhs1.(*FakeConnection).Other(), c1desc)
+	c1proxy := NewCtrlProxy(lhs1.(*LocalConnection).Other(), c1desc)
 
 	tdesc, _ := NewTargetDesc(kTargetJson)
-	tproxy := NewTargetProxy(rhs.(*FakeConnection).Other(), tdesc)
+	tproxy := NewTargetProxy(rhs.(*LocalConnection).Other(), tdesc)
 
 	var adapter Adapter = NewManyToOneAdapter(tproxy)
 	adapter.SetCtrlProxy(c0proxy)
@@ -116,17 +116,17 @@ func Test_ManyToOneAdapter_target_notify_binary_to_ctrls(t *testing.T) {
 func Test_ManyToOneAdapter_target_recv_binary_from_ctrls(t *testing.T) {
 	log.Println("######## [Test_ManyToOneAdapter_target_recv_binary_from_ctrls] ########")
 
-	var lhs0 Connection = NewFakeConnection()
-	var lhs1 Connection = NewFakeConnection()
-	var rhs Connection = NewFakeConnection()
+	var lhs0 Connection = NewLocalConnection()
+	var lhs1 Connection = NewLocalConnection()
+	var rhs Connection = NewLocalConnection()
 
 	c0desc, _ := NewCtrlDesc(kCtrlA0Json)
-	c0proxy := NewCtrlProxy(lhs0.(*FakeConnection).Other(), c0desc)
+	c0proxy := NewCtrlProxy(lhs0.(*LocalConnection).Other(), c0desc)
 	c1desc, _ := NewCtrlDesc(kCtrlA1Json)
-	c1proxy := NewCtrlProxy(lhs1.(*FakeConnection).Other(), c1desc)
+	c1proxy := NewCtrlProxy(lhs1.(*LocalConnection).Other(), c1desc)
 
 	tdesc, _ := NewTargetDesc(kTargetJson)
-	tproxy := NewTargetProxy(rhs.(*FakeConnection).Other(), tdesc)
+	tproxy := NewTargetProxy(rhs.(*LocalConnection).Other(), tdesc)
 
 	var adapter Adapter = NewManyToOneAdapter(tproxy)
 	adapter.SetCtrlProxy(c0proxy)
@@ -147,17 +147,17 @@ func Test_ManyToOneAdapter_target_recv_binary_from_ctrls(t *testing.T) {
 func Test_ManyToOneAdapter_close_all_ctrls_when_target_closed(t *testing.T) {
 	log.Println("######## [Test_ManyToOneAdapter_close_all_ctrls_when_target_closed] ########")
 
-	var lhs0 Connection = NewFakeConnection()
-	var lhs1 Connection = NewFakeConnection()
-	var rhs Connection = NewFakeConnection()
+	var lhs0 Connection = NewLocalConnection()
+	var lhs1 Connection = NewLocalConnection()
+	var rhs Connection = NewLocalConnection()
 
 	c0desc, _ := NewCtrlDesc(kCtrlA0Json)
-	c0proxy := NewCtrlProxy(lhs0.(*FakeConnection).Other(), c0desc)
+	c0proxy := NewCtrlProxy(lhs0.(*LocalConnection).Other(), c0desc)
 	c1desc, _ := NewCtrlDesc(kCtrlA1Json)
-	c1proxy := NewCtrlProxy(lhs1.(*FakeConnection).Other(), c1desc)
+	c1proxy := NewCtrlProxy(lhs1.(*LocalConnection).Other(), c1desc)
 
 	tdesc, _ := NewTargetDesc(kTargetJson)
-	tproxy := NewTargetProxy(rhs.(*FakeConnection).Other(), tdesc)
+	tproxy := NewTargetProxy(rhs.(*LocalConnection).Other(), tdesc)
 
 	var adapter Adapter = NewManyToOneAdapter(tproxy)
 	adapter.SetCtrlProxy(c0proxy)
@@ -179,17 +179,17 @@ func Test_ManyToOneAdapter_close_all_ctrls_when_target_closed(t *testing.T) {
 func Test_ManyToOneAdapter_remove_ctrl_proxy_after_closed(t *testing.T) {
 	log.Println("######## [Test_ManyToOneAdapter_remove_ctrl_proxy_after_closed] ########")
 
-	var lhs0 Connection = NewFakeConnection()
-	var lhs1 Connection = NewFakeConnection()
-	var rhs Connection = NewFakeConnection()
+	var lhs0 Connection = NewLocalConnection()
+	var lhs1 Connection = NewLocalConnection()
+	var rhs Connection = NewLocalConnection()
 
 	c0desc, _ := NewCtrlDesc(kCtrlA0Json)
-	c0proxy := NewCtrlProxy(lhs0.(*FakeConnection).Other(), c0desc)
+	c0proxy := NewCtrlProxy(lhs0.(*LocalConnection).Other(), c0desc)
 	c1desc, _ := NewCtrlDesc(kCtrlA1Json)
-	c1proxy := NewCtrlProxy(lhs1.(*FakeConnection).Other(), c1desc)
+	c1proxy := NewCtrlProxy(lhs1.(*LocalConnection).Other(), c1desc)
 
 	tdesc, _ := NewTargetDesc(kTargetJson)
-	tproxy := NewTargetProxy(rhs.(*FakeConnection).Other(), tdesc)
+	tproxy := NewTargetProxy(rhs.(*LocalConnection).Other(), tdesc)
 
 	adapter := NewManyToOneAdapter(tproxy)
 	adapter.SetCtrlProxy(c0proxy)

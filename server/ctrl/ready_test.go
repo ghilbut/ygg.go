@@ -2,8 +2,8 @@ package ctrl_test
 
 import (
 	. "github.com/ghilbut/ygg.go/common"
+	. "github.com/ghilbut/ygg.go/net"
 	. "github.com/ghilbut/ygg.go/server/ctrl"
-	. "github.com/ghilbut/ygg.go/test/fake"
 	. "github.com/ghilbut/ygg.go/test/mock/common"
 	. "github.com/ghilbut/ygg.go/test/mock/server/ctrl"
 	"github.com/golang/mock/gomock"
@@ -17,7 +17,7 @@ import (
 func Test_TargetReady_has_connection_after_set_connection(t *testing.T) {
 	log.Println("######## [Test_TargetReady_has_connection_after_set_connection] ########")
 
-	var conn Connection = NewFakeConnection()
+	var conn Connection = NewLocalConnection()
 
 	desc, _ := NewCtrlDesc(kCtrlJson)
 	cproxy := NewCtrlProxy(conn, desc)
@@ -38,14 +38,14 @@ func Test_TargetReady_has_connection_after_set_connection(t *testing.T) {
 func Test_TargetReady_clear_connection(t *testing.T) {
 	log.Println("######## [Test_TargetReady_clear_connection] ########")
 
-	var conn0 Connection = NewFakeConnection()
-	var conn1 Connection = NewFakeConnection()
-	var conn2 Connection = NewFakeConnection()
+	var conn0 Connection = NewLocalConnection()
+	var conn1 Connection = NewLocalConnection()
+	var conn2 Connection = NewLocalConnection()
 
 	desc, _ := NewCtrlDesc(kCtrlJson)
-	cproxy0 := NewCtrlProxy(conn0.(*FakeConnection).Other(), desc)
-	cproxy1 := NewCtrlProxy(conn1.(*FakeConnection).Other(), desc)
-	cproxy2 := NewCtrlProxy(conn2.(*FakeConnection).Other(), desc)
+	cproxy0 := NewCtrlProxy(conn0.(*LocalConnection).Other(), desc)
+	cproxy1 := NewCtrlProxy(conn1.(*LocalConnection).Other(), desc)
+	cproxy2 := NewCtrlProxy(conn2.(*LocalConnection).Other(), desc)
 
 	ready := NewTargetReady()
 	ready.SetConnection(conn0, cproxy0)
@@ -70,10 +70,10 @@ func Test_TargetReady_clear_connection(t *testing.T) {
 func Test_TargetReady_remove_connection_when_it_is_closed(t *testing.T) {
 	log.Println("######## [Test_TargetReady_remove_connection_when_it_is_closed] ########")
 
-	var conn Connection = NewFakeConnection()
+	var conn Connection = NewLocalConnection()
 
 	desc, _ := NewCtrlDesc(kCtrlJson)
-	cproxy0 := NewCtrlProxy(conn.(*FakeConnection).Other(), desc)
+	cproxy0 := NewCtrlProxy(conn.(*LocalConnection).Other(), desc)
 
 	ready := NewTargetReady()
 	ready.SetConnection(conn, cproxy0)
@@ -88,8 +88,8 @@ func Test_TargetReady_remove_connection_when_it_is_closed(t *testing.T) {
 func Test_TargetReady_remove_connection_when_invalid_json_is_passed(t *testing.T) {
 	log.Println("######## [Test_TargetReady_remove_connection_when_invalid_json_is_passed] ########")
 
-	var lhs Connection = NewFakeConnection()
-	var rhs = lhs.(*FakeConnection).Other()
+	var lhs Connection = NewLocalConnection()
+	var rhs = lhs.(*LocalConnection).Other()
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -102,7 +102,7 @@ func Test_TargetReady_remove_connection_when_invalid_json_is_passed(t *testing.T
 	mockTargetReadyDelegate.EXPECT().OnTargetProxy(gomock.Any(), gomock.Any()).Times(0)
 
 	desc, _ := NewCtrlDesc(kCtrlJson)
-	cproxy := NewCtrlProxy(NewFakeConnection(), desc)
+	cproxy := NewCtrlProxy(NewLocalConnection(), desc)
 
 	ready := NewTargetReady()
 	ready.Delegate = mockTargetReadyDelegate
@@ -144,11 +144,11 @@ func (self *_matcher) String() string {
 func Test_TargetReady_ok(t *testing.T) {
 	log.Println("######## [Test_TargetReady_ok] ########")
 
-	var lhs Connection = NewFakeConnection()
-	var rhs Connection = lhs.(*FakeConnection).Other()
+	var lhs Connection = NewLocalConnection()
+	var rhs Connection = lhs.(*LocalConnection).Other()
 
 	desc, _ := NewCtrlDesc(kCtrlJson)
-	cproxy := NewCtrlProxy(NewFakeConnection(), desc)
+	cproxy := NewCtrlProxy(NewLocalConnection(), desc)
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()

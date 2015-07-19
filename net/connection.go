@@ -1,21 +1,21 @@
-package fake
+package net
 
 import (
 	. "github.com/ghilbut/ygg.go/common"
 )
 
-type FakeConnection struct {
+type LocalConnection struct {
 	Connection
 	ConnectionDelegate
 
-	other    *FakeConnection
+	other    *LocalConnection
 	delegate ConnectionDelegate
 }
 
-func NewFakeConnection() *FakeConnection {
+func NewLocalConnection() *LocalConnection {
 
-	self := &FakeConnection{}
-	other := &FakeConnection{}
+	self := &LocalConnection{}
+	other := &LocalConnection{}
 
 	self.other = other
 	other.other = self
@@ -23,33 +23,33 @@ func NewFakeConnection() *FakeConnection {
 	return self
 }
 
-func (self *FakeConnection) Other() *FakeConnection {
+func (self *LocalConnection) Other() *LocalConnection {
 	return self.other
 }
 
-func (self *FakeConnection) BindDelegate(delegate ConnectionDelegate) {
+func (self *LocalConnection) BindDelegate(delegate ConnectionDelegate) {
 	self.delegate = delegate
 }
 
-func (self *FakeConnection) UnbindDelegate() {
+func (self *LocalConnection) UnbindDelegate() {
 	self.delegate = nil
 }
 
-func (self *FakeConnection) SendText(text string) {
+func (self *LocalConnection) SendText(text string) {
 	o := self.other
 	if d := o.delegate; d != nil {
 		d.OnText(o, text)
 	}
 }
 
-func (self *FakeConnection) SendBinary(bytes []byte) {
+func (self *LocalConnection) SendBinary(bytes []byte) {
 	o := self.other
 	if d := o.delegate; d != nil {
 		d.OnBinary(o, bytes)
 	}
 }
 
-func (self *FakeConnection) Close() {
+func (self *LocalConnection) Close() {
 	if d := self.delegate; d != nil {
 		d.OnClosed(self)
 	}
