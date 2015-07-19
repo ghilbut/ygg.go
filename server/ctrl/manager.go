@@ -18,12 +18,12 @@ type CtrlManager struct {
 	adapters    map[Adapter]bool
 }
 
-func NewCtrlManager(connectee Connectee, connector Connector) *CtrlManager {
+func NewCtrlManager(connector Connector) *CtrlManager {
 	log.Println("======== [CtrlManager][NewCtrlManager] ========")
-	assert.True(connectee != nil)
+	assert.True(connector != nil)
 
 	manager := &CtrlManager{
-		connectee:   connectee,
+		connectee:   nil,
 		connector:   connector,
 		ctrlReady:   NewCtrlReady(),
 		targetReady: NewTargetReady(),
@@ -35,12 +35,16 @@ func NewCtrlManager(connectee Connectee, connector Connector) *CtrlManager {
 	return manager
 }
 
-func (self *CtrlManager) Start() {
-	self.connectee.Start(self)
+func (self *CtrlManager) OnConnecteeStarted(connectee Connectee) {
+	log.Println("======== [CtrlManager][OnConnecteeStarted] ========")
+	assert.True(connectee != nil)
+
+	self.connectee = connectee
 }
 
-func (self *CtrlManager) Stop() {
-	self.connectee.Stop()
+func (self *CtrlManager) OnConnecteeStopped() {
+	log.Println("======== [CtrlManager][OnConnecteeStopped] ========")
+	assert.True(self.connectee != nil)
 
 	self.ctrlReady.Clear()
 	self.targetReady.Clear()
@@ -50,6 +54,9 @@ func (self *CtrlManager) Stop() {
 	}
 
 	assert.True(len(self.adapters) == 0)
+
+	self.connectee = nil
+
 }
 
 func (self *CtrlManager) HasAdapter(adapter Adapter) bool {

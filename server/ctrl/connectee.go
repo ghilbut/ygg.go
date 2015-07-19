@@ -5,10 +5,10 @@ import (
 )
 
 type Connectee interface {
-	Start(delegate ConnecteeDelegate)
-	Stop()
 }
 
 type ConnecteeDelegate interface {
+	OnConnecteeStarted(connectee Connectee)
+	OnConnecteeStopped()
 	OnCtrlConnected(conn Connection)
 }

@@ -10,38 +10,40 @@ import (
 type FakeConnectee struct {
 	Connectee
 
-	delegate ConnecteeDelegate
+	Delegate ConnecteeDelegate
 }
 
 func NewFakeConnectee() *FakeConnectee {
 	log.Println("======== [ctrl.FakeConnectee][NewFakeConnectee] ========")
 
 	connectee := &FakeConnectee{
-		delegate: nil,
+		Delegate: nil,
 	}
 
 	return connectee
 }
 
-func (self *FakeConnectee) Start(delegate ConnecteeDelegate) {
+func (self *FakeConnectee) Start() {
 	log.Println("======== [ctrl.FakeConnectee][Start] ========")
-	assert.True(delegate != nil)
+	assert.True(self.Delegate != nil)
 
-	self.delegate = delegate
+	self.Delegate.OnConnecteeStarted(self)
 }
 
 func (self *FakeConnectee) Stop() {
 	log.Println("======== [ctrl.FakeConnectee][Stop] ========")
+	assert.True(self.Delegate != nil)
 
-	self.delegate = nil
+	self.Delegate.OnConnecteeStopped()
+	self.Delegate = nil
 }
 
 func (self *FakeConnectee) SetCtrlConnection(conn Connection) {
 	log.Println("======== [ctrl.FakeConnectee][SetCtrlConnection] ========")
 	assert.True(conn != nil)
 
-	if self.delegate != nil {
-		self.delegate.OnCtrlConnected(conn)
+	if self.Delegate != nil {
+		self.Delegate.OnCtrlConnected(conn)
 	} else {
 		conn.Close()
 	}

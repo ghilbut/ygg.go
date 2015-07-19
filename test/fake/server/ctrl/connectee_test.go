@@ -22,7 +22,8 @@ func Test_FakeConnectee_delegate_connection_when_set_connection(t *testing.T) {
 	mockDelegate.EXPECT().OnCtrlConnected(conn)
 
 	connectee := NewFakeConnectee()
-	connectee.Start(mockDelegate)
+	connectee.Delegate = mockDelegate
+	connectee.Start()
 	connectee.SetCtrlConnection(conn)
 }
 

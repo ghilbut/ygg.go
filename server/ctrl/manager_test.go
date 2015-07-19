@@ -34,8 +34,9 @@ func Test_CtrlManager_send_text(t *testing.T) {
 
 	connectee := NewFakeConnectee()
 	connector := NewFakeConnector()
-	manager := NewCtrlManager(connectee, connector)
-	manager.Start()
+	manager := NewCtrlManager(connector)
+	connectee.Delegate = manager
+	connectee.Start()
 
 	connector.SetTargetConnection("B", target.(*FakeConnection).Other())
 	connectee.SetCtrlConnection(ctrl.(*FakeConnection).Other())
@@ -60,8 +61,9 @@ func Test_CtrlManager_recv_text(t *testing.T) {
 
 	connectee := NewFakeConnectee()
 	connector := NewFakeConnector()
-	manager := NewCtrlManager(connectee, connector)
-	manager.Start()
+	manager := NewCtrlManager(connector)
+	connectee.Delegate = manager
+	connectee.Start()
 
 	connector.SetTargetConnection("B", target.(*FakeConnection).Other())
 	connectee.SetCtrlConnection(ctrl.(*FakeConnection).Other())
@@ -86,8 +88,9 @@ func Test_CtrlManager_send_binary(t *testing.T) {
 
 	connectee := NewFakeConnectee()
 	connector := NewFakeConnector()
-	manager := NewCtrlManager(connectee, connector)
-	manager.Start()
+	manager := NewCtrlManager(connector)
+	connectee.Delegate = manager
+	connectee.Start()
 
 	connector.SetTargetConnection("B", target.(*FakeConnection).Other())
 	connectee.SetCtrlConnection(ctrl.(*FakeConnection).Other())
@@ -112,8 +115,9 @@ func Test_CtrlManager_recv_binary(t *testing.T) {
 
 	connectee := NewFakeConnectee()
 	connector := NewFakeConnector()
-	manager := NewCtrlManager(connectee, connector)
-	manager.Start()
+	manager := NewCtrlManager(connector)
+	connectee.Delegate = manager
+	connectee.Start()
 
 	connector.SetTargetConnection("B", target.(*FakeConnection).Other())
 	connectee.SetCtrlConnection(ctrl.(*FakeConnection).Other())
@@ -140,8 +144,9 @@ func Test_CtrlManager_remove_adapter_when_target_is_closed(t *testing.T) {
 
 	connectee := NewFakeConnectee()
 	connector := NewFakeConnector()
-	manager := NewCtrlManager(connectee, connector)
-	manager.Start()
+	manager := NewCtrlManager(connector)
+	connectee.Delegate = manager
+	connectee.Start()
 
 	connector.SetTargetConnection("B", target.(*FakeConnection).Other())
 	connectee.SetCtrlConnection(ctrl.(*FakeConnection).Other())
@@ -168,8 +173,9 @@ func Test_CtrlManager_remove_adapter_when_set_endpoint_which_alreay_exists(t *te
 
 	connectee := NewFakeConnectee()
 	connector := NewFakeConnector()
-	manager := NewCtrlManager(connectee, connector)
-	manager.Start()
+	manager := NewCtrlManager(connector)
+	connectee.Delegate = manager
+	connectee.Start()
 
 	connector.SetTargetConnection("B", target0.(*FakeConnection).Other())
 	target0.SendText(kTargetJson)
@@ -195,13 +201,14 @@ func Test_CtrlManager_remove_adapter_when_manager_is_stopped(t *testing.T) {
 
 	connectee := NewFakeConnectee()
 	connector := NewFakeConnector()
-	manager := NewCtrlManager(connectee, connector)
-	manager.Start()
+	manager := NewCtrlManager(connector)
+	connectee.Delegate = manager
+	connectee.Start()
 
 	connector.SetTargetConnection("B", target.(*FakeConnection).Other())
 	connectee.SetCtrlConnection(ctrl.(*FakeConnection).Other())
 	ctrl.SendText(kCtrlJson)
 	target.SendText(kTargetJson)
 
-	manager.Stop()
+	connectee.Stop()
 }
