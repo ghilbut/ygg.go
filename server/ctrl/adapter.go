@@ -19,6 +19,7 @@ type OneToOneAdapter struct {
 
 func NewOneToOneAdapter(proxy *TargetProxy) *OneToOneAdapter {
 	log.Println("======== [OneToOneAdapter][NewOneToOneAdapter] ========")
+	assert.True(proxy != nil)
 
 	adapter := &OneToOneAdapter{
 		ctrl:     nil,
@@ -59,6 +60,7 @@ func (self *OneToOneAdapter) quit() {
 
 func (self *OneToOneAdapter) BindDelegate(delegate AdapterDelegate) {
 	log.Println("======== [OneToOneAdapter][BindDelegate] ========")
+	assert.True(delegate != nil)
 
 	self.delegate = delegate
 }

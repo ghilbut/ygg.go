@@ -73,6 +73,7 @@ func (self *TargetReady) OnText(conn Connection, text string) {
 
 	proxy = NewTargetProxy(conn, desc)
 	if proxy != nil {
+		delete(self.readys, conn)
 		self.Delegate.OnTargetProxy(proxy)
 	}
 }

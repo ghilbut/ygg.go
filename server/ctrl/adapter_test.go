@@ -17,6 +17,106 @@ const kText = "Message"
 
 var kBytes = []byte{0x01, 0x02}
 
+func Test_OneToOneAdapter_send_text(t *testing.T) {
+	log.Println("######## [Test_OneToOneAdapter_send_text] ########")
+
+	var ctrl Connection = NewFakeConnection()
+	var target Connection = NewFakeConnection()
+
+	cdesc, _ := NewCtrlDesc(kCtrlJson)
+	cproxy := NewCtrlProxy(ctrl.(*FakeConnection).Other(), cdesc)
+
+	tdesc, _ := NewTargetDesc(kTargetJson)
+	tproxy := NewTargetProxy(target.(*FakeConnection).Other(), tdesc)
+
+	adapter := NewOneToOneAdapter(tproxy)
+	adapter.SetCtrlProxy(cproxy)
+
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockConnDelegate := NewMockConnectionDelegate(mockCtrl)
+	mockConnDelegate.EXPECT().OnText(ctrl, kText)
+	ctrl.BindDelegate(mockConnDelegate)
+
+	target.SendText(kText)
+}
+
+func Test_OneToOneAdapter_recv_text(t *testing.T) {
+	log.Println("######## [Test_OneToOneAdapter_recv_text] ########")
+
+	var ctrl Connection = NewFakeConnection()
+	var target Connection = NewFakeConnection()
+
+	cdesc, _ := NewCtrlDesc(kCtrlJson)
+	cproxy := NewCtrlProxy(ctrl.(*FakeConnection).Other(), cdesc)
+
+	tdesc, _ := NewTargetDesc(kTargetJson)
+	tproxy := NewTargetProxy(target.(*FakeConnection).Other(), tdesc)
+
+	adapter := NewOneToOneAdapter(tproxy)
+	adapter.SetCtrlProxy(cproxy)
+
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockConnDelegate := NewMockConnectionDelegate(mockCtrl)
+	mockConnDelegate.EXPECT().OnText(target, kText)
+	target.BindDelegate(mockConnDelegate)
+
+	ctrl.SendText(kText)
+}
+
+func Test_OneToOneAdapter_send_binary(t *testing.T) {
+	log.Println("######## [Test_OneToOneAdapter_send_text] ########")
+
+	var ctrl Connection = NewFakeConnection()
+	var target Connection = NewFakeConnection()
+
+	cdesc, _ := NewCtrlDesc(kCtrlJson)
+	cproxy := NewCtrlProxy(ctrl.(*FakeConnection).Other(), cdesc)
+
+	tdesc, _ := NewTargetDesc(kTargetJson)
+	tproxy := NewTargetProxy(target.(*FakeConnection).Other(), tdesc)
+
+	adapter := NewOneToOneAdapter(tproxy)
+	adapter.SetCtrlProxy(cproxy)
+
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockConnDelegate := NewMockConnectionDelegate(mockCtrl)
+	mockConnDelegate.EXPECT().OnBinary(ctrl, kBytes)
+	ctrl.BindDelegate(mockConnDelegate)
+
+	target.SendBinary(kBytes)
+}
+
+func Test_OneToOneAdapter_recv_binary(t *testing.T) {
+	log.Println("######## [Test_OneToOneAdapter_recv_binary] ########")
+
+	var ctrl Connection = NewFakeConnection()
+	var target Connection = NewFakeConnection()
+
+	cdesc, _ := NewCtrlDesc(kCtrlJson)
+	cproxy := NewCtrlProxy(ctrl.(*FakeConnection).Other(), cdesc)
+
+	tdesc, _ := NewTargetDesc(kTargetJson)
+	tproxy := NewTargetProxy(target.(*FakeConnection).Other(), tdesc)
+
+	adapter := NewOneToOneAdapter(tproxy)
+	adapter.SetCtrlProxy(cproxy)
+
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockConnDelegate := NewMockConnectionDelegate(mockCtrl)
+	mockConnDelegate.EXPECT().OnBinary(target, kBytes)
+	target.BindDelegate(mockConnDelegate)
+
+	ctrl.SendBinary(kBytes)
+}
+
 func Test_OneToOneAdapter_close_ctrl(t *testing.T) {
 	log.Println("######## [Test_OneToOneAdapter_close_ctrl] ########")
 

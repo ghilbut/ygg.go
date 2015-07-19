@@ -143,4 +143,8 @@ func Test_TargetReady_ok(t *testing.T) {
 	ready.SetConnection(rhs)
 
 	lhs.SendText(kJson)
+
+	if ready.HasConnection(rhs) {
+		t.Fail()
+	}
 }

@@ -82,6 +82,8 @@ func (self *TargetReady) OnText(conn Connection, text string) {
 	proxy = NewTargetProxy(conn, desc)
 	if proxy != nil {
 		ctrl := self.readys[conn]
+		delete(self.readys, conn)
+		delete(self.reverseFind, ctrl)
 		self.Delegate.OnTargetProxy(ctrl, proxy)
 	}
 }
