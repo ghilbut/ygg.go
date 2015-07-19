@@ -15,15 +15,18 @@ func Test_FakeConnectee_delegate_connection_when_set_connection(t *testing.T) {
 
 	conn := NewFakeConnection()
 
+	connectee := NewFakeConnectee()
+
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
 	mockDelegate := NewMockConnecteeDelegate(mockCtrl)
+	mockDelegate.EXPECT().OnConnecteeStarted(connectee)
 	mockDelegate.EXPECT().OnCtrlConnected(conn)
 
-	connectee := NewFakeConnectee()
 	connectee.Delegate = mockDelegate
 	connectee.Start()
+
 	connectee.SetCtrlConnection(conn)
 }
 
