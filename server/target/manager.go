@@ -18,12 +18,11 @@ type TargetManager struct {
 	adapterToEndpoint map[Adapter]string
 }
 
-func NewTargetManager(connectee Connectee) *TargetManager {
+func NewTargetManager() *TargetManager {
 	log.Println("======== [TargetManager][NewTargetManager] ========")
-	assert.True(connectee != nil)
 
 	manager := &TargetManager{
-		connectee:         connectee,
+		connectee:         nil,
 		ctrlReady:         NewCtrlReady(),
 		targetReady:       NewTargetReady(),
 		endpointToAdapter: make(map[string]Adapter),
@@ -35,12 +34,15 @@ func NewTargetManager(connectee Connectee) *TargetManager {
 	return manager
 }
 
-func (self *TargetManager) Start() {
-	self.connectee.Start(self)
+func (self *TargetManager) OnConnecteeStarted(connectee Connectee) {
+	log.Println("======== [TargetManager][OnConnecteeStarted] ========")
+	assert.True(connectee != nil)
+
+	self.connectee = connectee
 }
 
-func (self *TargetManager) Stop() {
-	self.connectee.Stop()
+func (self *TargetManager) OnConnecteeStopped() {
+	log.Println("======== [TargetManager][OnConnecteeStoped] ========")
 
 	self.ctrlReady.Clear()
 	self.targetReady.Clear()
@@ -50,6 +52,8 @@ func (self *TargetManager) Stop() {
 	}
 
 	assert.True(len(self.adapterToEndpoint) == 0)
+
+	self.connectee = nil
 }
 
 func (self *TargetManager) HasAdapter(adapter Adapter) bool {

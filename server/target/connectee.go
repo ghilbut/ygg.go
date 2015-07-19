@@ -5,14 +5,13 @@ import (
 )
 
 type Connectee interface {
-	Start(delegate ConnecteeDelegate)
-	Stop()
 	Register(endpoint string) bool
 	Unregister(endpoint string)
-	HasEndpoint(endpoint string) bool
 }
 
 type ConnecteeDelegate interface {
+	OnConnecteeStarted(connectee Connectee)
+	OnConnecteeStopped()
 	OnCtrlConnected(conn Connection)
 	OnTargetConnected(conn Connection)
 }

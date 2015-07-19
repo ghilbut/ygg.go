@@ -16,10 +16,16 @@ type _NullConnecteeDelegate struct {
 	ConnecteeDelegate
 }
 
-func (self *_NullConnecteeDelegate) OnCtrlConnected(conn Connection) {
+func (self *_NullConnecteeDelegate) OnConnecteeStarted(c Connectee) {
 }
 
-func (self *_NullConnecteeDelegate) OnTargetConnected(conn Connection) {
+func (self *_NullConnecteeDelegate) OnConnecteeStopped() {
+}
+
+func (self *_NullConnecteeDelegate) OnCtrlConnected(c Connection) {
+}
+
+func (self *_NullConnecteeDelegate) OnTargetConnected(c Connection) {
 }
 
 func Test_FakeConnectee_return_false_when_register_before_started(t *testing.T) {
@@ -39,10 +45,10 @@ func Test_FakeConnectee_return_false_when_register_before_started(t *testing.T) 
 func Test_FakeConnectee_return_true_when_register_on_running(t *testing.T) {
 	log.Println("######## [Test_FakeConnectee_return_true_when_register_on_running] ########")
 
-	var connectee Connectee = NewFakeConnectee()
-	delegate := &_NullConnecteeDelegate{}
+	connectee := NewFakeConnectee()
+	connectee.Delegate = &_NullConnecteeDelegate{}
 
-	connectee.Start(delegate)
+	connectee.Start()
 
 	if connectee.HasEndpoint("A") {
 		t.Fail()
@@ -60,9 +66,10 @@ func Test_FakeConnectee_return_true_when_register_on_running(t *testing.T) {
 func Test_FakeConnectee_return_false_when_register_after_stop(t *testing.T) {
 	log.Println("######## [Test_FakeConnectee_return_false_when_register_after_stop] ########")
 
-	var connectee Connectee = NewFakeConnectee()
-	delegate := &_NullConnecteeDelegate{}
-	connectee.Start(delegate)
+	connectee := NewFakeConnectee()
+	connectee.Delegate = &_NullConnecteeDelegate{}
+
+	connectee.Start()
 	connectee.Register("A")
 
 	connectee.Stop()
@@ -79,10 +86,10 @@ func Test_FakeConnectee_return_false_when_register_after_stop(t *testing.T) {
 func Test_FakeConnectee_return_false_when_endpoint_already_exists(t *testing.T) {
 	log.Println("######## [Test_FakeConnectee_return_false_when_endpoint_already_exists] ########")
 
-	delegate := &_NullConnecteeDelegate{}
+	connectee := NewFakeConnectee()
+	connectee.Delegate = &_NullConnecteeDelegate{}
 
-	var connectee Connectee = NewFakeConnectee()
-	connectee.Start(delegate)
+	connectee.Start()
 	connectee.Register("A")
 
 	if connectee.Register("A") {
@@ -97,9 +104,10 @@ func Test_FakeConnectee_return_false_when_endpoint_already_exists(t *testing.T) 
 func Test_FakeConnectee_unregister(t *testing.T) {
 	log.Println("######## [Test_FakeConnectee_unregister] ########")
 
-	var connectee Connectee = NewFakeConnectee()
-	delegate := &_NullConnecteeDelegate{}
-	connectee.Start(delegate)
+	connectee := NewFakeConnectee()
+	connectee.Delegate = &_NullConnecteeDelegate{}
+
+	connectee.Start()
 	connectee.Register("A")
 
 	connectee.Unregister("A")
@@ -114,15 +122,19 @@ func Test_FakeConnectee_delegate_connection_when_set_connection(t *testing.T) {
 
 	conn := NewFakeConnection()
 
+	connectee := NewFakeConnectee()
+
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
 	mockDelegate := NewMockConnecteeDelegate(mockCtrl)
+	mockDelegate.EXPECT().OnConnecteeStarted(connectee)
 	mockDelegate.EXPECT().OnCtrlConnected(conn)
 	mockDelegate.EXPECT().OnTargetConnected(conn)
 
-	connectee := NewFakeConnectee()
-	connectee.Start(mockDelegate)
+	connectee.Delegate = mockDelegate
+
+	connectee.Start()
 	connectee.SetCtrlConnection(conn)
 	connectee.SetTargetConnection(conn)
 }

@@ -11,7 +11,7 @@ type FakeConnectee struct {
 	Connectee
 
 	endpoints map[string]bool
-	delegate  ConnecteeDelegate
+	Delegate  ConnecteeDelegate
 }
 
 func NewFakeConnectee() *FakeConnectee {
@@ -19,17 +19,17 @@ func NewFakeConnectee() *FakeConnectee {
 
 	connectee := &FakeConnectee{
 		endpoints: make(map[string]bool),
-		delegate:  nil,
+		Delegate:  nil,
 	}
 
 	return connectee
 }
 
-func (self *FakeConnectee) Start(delegate ConnecteeDelegate) {
+func (self *FakeConnectee) Start() {
 	log.Println("======== [FakeConnectee][Start] ========")
-	assert.True(delegate != nil)
+	assert.True(self.Delegate != nil)
 
-	self.delegate = delegate
+	self.Delegate.OnConnecteeStarted(self)
 }
 
 func (self *FakeConnectee) Stop() {
@@ -39,14 +39,15 @@ func (self *FakeConnectee) Stop() {
 		delete(self.endpoints, endpoint)
 	}
 
-	self.delegate = nil
+	self.Delegate.OnConnecteeStopped()
+	self.Delegate = nil
 }
 
 func (self *FakeConnectee) Register(endpoint string) bool {
 	log.Println("======== [FakeConnectee][Register] ========")
 	assert.True(len(endpoint) > 0)
 
-	if self.delegate == nil {
+	if self.Delegate == nil {
 		return false
 	}
 
@@ -78,8 +79,8 @@ func (self *FakeConnectee) SetCtrlConnection(conn Connection) {
 	log.Println("======== [FakeConnectee][SetCtrlConnection] ========")
 	assert.True(conn != nil)
 
-	if self.delegate != nil {
-		self.delegate.OnCtrlConnected(conn)
+	if self.Delegate != nil {
+		self.Delegate.OnCtrlConnected(conn)
 	} else {
 		conn.Close()
 	}
@@ -89,8 +90,8 @@ func (self *FakeConnectee) SetTargetConnection(conn Connection) {
 	log.Println("======== [FakeConnectee][SetTargetConnection] ========")
 	assert.True(conn != nil)
 
-	if self.delegate != nil {
-		self.delegate.OnTargetConnected(conn)
+	if self.Delegate != nil {
+		self.Delegate.OnTargetConnected(conn)
 	} else {
 		conn.Close()
 	}

@@ -35,9 +35,10 @@ func Test_TargetManager_notify_text(t *testing.T) {
 	ctrlA0.BindDelegate(mockDelegate)
 	ctrlA1.BindDelegate(mockDelegate)
 
+	manager := NewTargetManager()
 	connectee := NewFakeConnectee()
-	manager := NewTargetManager(connectee)
-	manager.Start()
+	connectee.Delegate = manager
+	connectee.Start()
 
 	connectee.SetTargetConnection(target.(*FakeConnection).Other())
 	target.SendText(kTargetJson)
@@ -64,9 +65,10 @@ func Test_TargetManager_recv_text(t *testing.T) {
 	mockDelegate.EXPECT().OnText(target, kText).Times(2)
 	target.BindDelegate(mockDelegate)
 
+	manager := NewTargetManager()
 	connectee := NewFakeConnectee()
-	manager := NewTargetManager(connectee)
-	manager.Start()
+	connectee.Delegate = manager
+	connectee.Start()
 
 	connectee.SetTargetConnection(target.(*FakeConnection).Other())
 	target.SendText(kTargetJson)
@@ -96,9 +98,10 @@ func Test_TargetManager_notify_binary(t *testing.T) {
 	ctrlA0.BindDelegate(mockDelegate)
 	ctrlA1.BindDelegate(mockDelegate)
 
+	manager := NewTargetManager()
 	connectee := NewFakeConnectee()
-	manager := NewTargetManager(connectee)
-	manager.Start()
+	connectee.Delegate = manager
+	connectee.Start()
 
 	connectee.SetTargetConnection(target.(*FakeConnection).Other())
 	target.SendText(kTargetJson)
@@ -125,9 +128,10 @@ func Test_TargetManager_recv_binary(t *testing.T) {
 	mockDelegate.EXPECT().OnBinary(target, kBytes).Times(2)
 	target.BindDelegate(mockDelegate)
 
+	manager := NewTargetManager()
 	connectee := NewFakeConnectee()
-	manager := NewTargetManager(connectee)
-	manager.Start()
+	connectee.Delegate = manager
+	connectee.Start()
 
 	connectee.SetTargetConnection(target.(*FakeConnection).Other())
 	target.SendText(kTargetJson)
@@ -156,9 +160,10 @@ func Test_TargetManager_remove_adapter_when_target_is_closed(t *testing.T) {
 	ctrlA0.BindDelegate(mockDelegate)
 	ctrlA1.BindDelegate(mockDelegate)
 
+	manager := NewTargetManager()
 	connectee := NewFakeConnectee()
-	manager := NewTargetManager(connectee)
-	manager.Start()
+	connectee.Delegate = manager
+	connectee.Start()
 
 	connectee.SetTargetConnection(target.(*FakeConnection).Other())
 	target.SendText(kTargetJson)
@@ -190,9 +195,10 @@ func Test_TargetManager_remove_adapter_when_set_endpoint_which_alreay_exists(t *
 	target0.BindDelegate(mockDelegate)
 	target1.BindDelegate(mockDelegate)
 
+	manager := NewTargetManager()
 	connectee := NewFakeConnectee()
-	manager := NewTargetManager(connectee)
-	manager.Start()
+	connectee.Delegate = manager
+	connectee.Start()
 
 	connectee.SetTargetConnection(target0.(*FakeConnection).Other())
 	target0.SendText(kTargetJson)
@@ -219,9 +225,10 @@ func Test_TargetManager_remove_adapter_when_manager_is_stopped(t *testing.T) {
 	ctrlA1.BindDelegate(mockDelegate)
 	target.BindDelegate(mockDelegate)
 
+	manager := NewTargetManager()
 	connectee := NewFakeConnectee()
-	manager := NewTargetManager(connectee)
-	manager.Start()
+	connectee.Delegate = manager
+	connectee.Start()
 
 	connectee.SetTargetConnection(target.(*FakeConnection).Other())
 	target.SendText(kTargetJson)
@@ -231,7 +238,7 @@ func Test_TargetManager_remove_adapter_when_manager_is_stopped(t *testing.T) {
 	connectee.SetCtrlConnection(ctrlA1.(*FakeConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
-	manager.Stop()
+	connectee.Stop()
 
 	if manager.HasEndpoint("B") {
 		t.Fail()
