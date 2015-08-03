@@ -4,14 +4,14 @@ import (
 	. "github.com/ghilbut/ygg.go/common"
 )
 
-type Connectee interface {
+type TargetBridge interface {
 	Register(endpoint string) bool
 	Unregister(endpoint string)
 }
 
-type ConnecteeDelegate interface {
-	OnConnecteeStarted(connectee Connectee)
-	OnConnecteeStopped()
+type TargetBridgeDelegate interface {
+	OnTargetBridgeStarted(bridge TargetBridge)
+	OnTargetBridgeStopped()
 	OnCtrlConnected(conn Connection)
 	OnTargetConnected(conn Connection)
 }

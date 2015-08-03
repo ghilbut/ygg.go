@@ -7,24 +7,21 @@ import (
 )
 
 type CtrlManager struct {
-	ConnecteeDelegate
+	CtrlBridgeDelegate
 	CtrlReadyDelegate
 	TargetReadyDelegate
 
-	connectee   Connectee
-	connector   Connector
+	bridge      CtrlBridge
 	ctrlReady   *CtrlReady
 	targetReady *TargetReady
 	adapters    map[Adapter]bool
 }
 
-func NewCtrlManager(connector Connector) *CtrlManager {
+func NewCtrlManager() *CtrlManager {
 	log.Println("======== [CtrlManager][NewCtrlManager] ========")
-	assert.True(connector != nil)
 
 	manager := &CtrlManager{
-		connectee:   nil,
-		connector:   connector,
+		bridge:      nil,
 		ctrlReady:   NewCtrlReady(),
 		targetReady: NewTargetReady(),
 		adapters:    make(map[Adapter]bool),
@@ -35,16 +32,16 @@ func NewCtrlManager(connector Connector) *CtrlManager {
 	return manager
 }
 
-func (self *CtrlManager) OnConnecteeStarted(connectee Connectee) {
-	log.Println("======== [CtrlManager][OnConnecteeStarted] ========")
-	assert.True(connectee != nil)
+func (self *CtrlManager) OnCtrlBridgeStarted(bridge CtrlBridge) {
+	log.Println("======== [CtrlManager][OnCtrlBridgeStarted] ========")
+	assert.True(bridge != nil)
 
-	self.connectee = connectee
+	self.bridge = bridge
 }
 
-func (self *CtrlManager) OnConnecteeStopped() {
-	log.Println("======== [CtrlManager][OnConnecteeStopped] ========")
-	assert.True(self.connectee != nil)
+func (self *CtrlManager) OnCtrlBridgeStopped() {
+	log.Println("======== [CtrlManager][OnCtrlBridgeStopped] ========")
+	assert.True(self.bridge != nil)
 
 	self.ctrlReady.Clear()
 	self.targetReady.Clear()
@@ -55,7 +52,7 @@ func (self *CtrlManager) OnConnecteeStopped() {
 
 	assert.True(len(self.adapters) == 0)
 
-	self.connectee = nil
+	self.bridge = nil
 
 }
 
@@ -77,7 +74,7 @@ func (self *CtrlManager) OnCtrlConnected(conn Connection) {
 func (self *CtrlManager) OnCtrlProxy(proxy *CtrlProxy) {
 	log.Println("======== [CtrlManager][OnCtrlProxy] ========")
 
-	conn := self.connector.Connect(proxy)
+	conn := self.bridge.Connect(proxy)
 	if conn != nil {
 		self.targetReady.SetConnection(conn, proxy)
 	} else {

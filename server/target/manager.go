@@ -7,11 +7,11 @@ import (
 )
 
 type TargetManager struct {
-	ConnecteeDelegate
+	TargetBridgeDelegate
 	CtrlReadyDelegate
 	TargetReadyDelegate
 
-	connectee         Connectee
+	bridge            TargetBridge
 	ctrlReady         *CtrlReady
 	targetReady       *TargetReady
 	endpointToAdapter map[string]Adapter
@@ -22,7 +22,7 @@ func NewTargetManager() *TargetManager {
 	log.Println("======== [TargetManager][NewTargetManager] ========")
 
 	manager := &TargetManager{
-		connectee:         nil,
+		bridge:            nil,
 		ctrlReady:         NewCtrlReady(),
 		targetReady:       NewTargetReady(),
 		endpointToAdapter: make(map[string]Adapter),
@@ -34,15 +34,15 @@ func NewTargetManager() *TargetManager {
 	return manager
 }
 
-func (self *TargetManager) OnConnecteeStarted(connectee Connectee) {
-	log.Println("======== [TargetManager][OnConnecteeStarted] ========")
-	assert.True(connectee != nil)
+func (self *TargetManager) OnTargetBridgeStarted(bridge TargetBridge) {
+	log.Println("======== [TargetManager][OnTargetBridgeStarted] ========")
+	assert.True(bridge != nil)
 
-	self.connectee = connectee
+	self.bridge = bridge
 }
 
-func (self *TargetManager) OnConnecteeStopped() {
-	log.Println("======== [TargetManager][OnConnecteeStoped] ========")
+func (self *TargetManager) OnTargetBridgeStopped() {
+	log.Println("======== [TargetManager][OnTargetBridgeStoped] ========")
 
 	self.ctrlReady.Clear()
 	self.targetReady.Clear()
@@ -53,7 +53,7 @@ func (self *TargetManager) OnConnecteeStopped() {
 
 	assert.True(len(self.adapterToEndpoint) == 0)
 
-	self.connectee = nil
+	self.bridge = nil
 }
 
 func (self *TargetManager) HasAdapter(adapter Adapter) bool {
@@ -117,7 +117,7 @@ func (self *TargetManager) OnTargetProxy(proxy *TargetProxy) {
 		return
 	}
 
-	if !self.connectee.Register(endpoint) {
+	if !self.bridge.Register(endpoint) {
 		proxy.Close()
 		return
 	}
@@ -133,7 +133,7 @@ func (self *TargetManager) OnAdapterClosed(adapter Adapter) {
 
 	adapter.UnbindDelegate()
 	endpoint, _ := self.adapterToEndpoint[adapter]
-	self.connectee.Unregister(endpoint)
+	self.bridge.Unregister(endpoint)
 	delete(self.adapterToEndpoint, adapter)
 	delete(self.endpointToAdapter, endpoint)
 }

@@ -36,16 +36,16 @@ func Test_TargetManager_notify_text(t *testing.T) {
 	ctrlA1.BindDelegate(mockDelegate)
 
 	manager := NewTargetManager()
-	connectee := NewFakeConnectee()
-	connectee.Delegate = manager
-	connectee.Start()
+	bridge := NewFakeTargetBridge()
+	bridge.Delegate = manager
+	bridge.Start()
 
-	connectee.SetTargetConnection(target.(*LocalConnection).Other())
+	bridge.SetTargetConnection(target.(*LocalConnection).Other())
 	target.SendText(kTargetJson)
 
-	connectee.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
+	bridge.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	connectee.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
+	bridge.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	target.SendText(kText)
@@ -66,16 +66,16 @@ func Test_TargetManager_recv_text(t *testing.T) {
 	target.BindDelegate(mockDelegate)
 
 	manager := NewTargetManager()
-	connectee := NewFakeConnectee()
-	connectee.Delegate = manager
-	connectee.Start()
+	bridge := NewFakeTargetBridge()
+	bridge.Delegate = manager
+	bridge.Start()
 
-	connectee.SetTargetConnection(target.(*LocalConnection).Other())
+	bridge.SetTargetConnection(target.(*LocalConnection).Other())
 	target.SendText(kTargetJson)
 
-	connectee.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
+	bridge.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	connectee.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
+	bridge.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	ctrlA0.SendText(kText)
@@ -99,16 +99,16 @@ func Test_TargetManager_notify_binary(t *testing.T) {
 	ctrlA1.BindDelegate(mockDelegate)
 
 	manager := NewTargetManager()
-	connectee := NewFakeConnectee()
-	connectee.Delegate = manager
-	connectee.Start()
+	bridge := NewFakeTargetBridge()
+	bridge.Delegate = manager
+	bridge.Start()
 
-	connectee.SetTargetConnection(target.(*LocalConnection).Other())
+	bridge.SetTargetConnection(target.(*LocalConnection).Other())
 	target.SendText(kTargetJson)
 
-	connectee.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
+	bridge.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	connectee.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
+	bridge.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	target.SendBinary(kBytes)
@@ -129,16 +129,16 @@ func Test_TargetManager_recv_binary(t *testing.T) {
 	target.BindDelegate(mockDelegate)
 
 	manager := NewTargetManager()
-	connectee := NewFakeConnectee()
-	connectee.Delegate = manager
-	connectee.Start()
+	bridge := NewFakeTargetBridge()
+	bridge.Delegate = manager
+	bridge.Start()
 
-	connectee.SetTargetConnection(target.(*LocalConnection).Other())
+	bridge.SetTargetConnection(target.(*LocalConnection).Other())
 	target.SendText(kTargetJson)
 
-	connectee.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
+	bridge.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	connectee.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
+	bridge.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	ctrlA0.SendBinary(kBytes)
@@ -161,16 +161,16 @@ func Test_TargetManager_remove_adapter_when_target_is_closed(t *testing.T) {
 	ctrlA1.BindDelegate(mockDelegate)
 
 	manager := NewTargetManager()
-	connectee := NewFakeConnectee()
-	connectee.Delegate = manager
-	connectee.Start()
+	bridge := NewFakeTargetBridge()
+	bridge.Delegate = manager
+	bridge.Start()
 
-	connectee.SetTargetConnection(target.(*LocalConnection).Other())
+	bridge.SetTargetConnection(target.(*LocalConnection).Other())
 	target.SendText(kTargetJson)
 
-	connectee.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
+	bridge.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	connectee.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
+	bridge.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
 	target.Close()
@@ -196,14 +196,14 @@ func Test_TargetManager_remove_adapter_when_set_endpoint_which_alreay_exists(t *
 	target1.BindDelegate(mockDelegate)
 
 	manager := NewTargetManager()
-	connectee := NewFakeConnectee()
-	connectee.Delegate = manager
-	connectee.Start()
+	bridge := NewFakeTargetBridge()
+	bridge.Delegate = manager
+	bridge.Start()
 
-	connectee.SetTargetConnection(target0.(*LocalConnection).Other())
+	bridge.SetTargetConnection(target0.(*LocalConnection).Other())
 	target0.SendText(kTargetJson)
 
-	connectee.SetTargetConnection(target1.(*LocalConnection).Other())
+	bridge.SetTargetConnection(target1.(*LocalConnection).Other())
 	target1.SendText(kTargetJson)
 }
 
@@ -226,19 +226,19 @@ func Test_TargetManager_remove_adapter_when_manager_is_stopped(t *testing.T) {
 	target.BindDelegate(mockDelegate)
 
 	manager := NewTargetManager()
-	connectee := NewFakeConnectee()
-	connectee.Delegate = manager
-	connectee.Start()
+	bridge := NewFakeTargetBridge()
+	bridge.Delegate = manager
+	bridge.Start()
 
-	connectee.SetTargetConnection(target.(*LocalConnection).Other())
+	bridge.SetTargetConnection(target.(*LocalConnection).Other())
 	target.SendText(kTargetJson)
 
-	connectee.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
+	bridge.SetCtrlConnection(ctrlA0.(*LocalConnection).Other())
 	ctrlA0.SendText(kCtrlA0Json)
-	connectee.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
+	bridge.SetCtrlConnection(ctrlA1.(*LocalConnection).Other())
 	ctrlA1.SendText(kCtrlA1Json)
 
-	connectee.Stop()
+	bridge.Stop()
 
 	if manager.HasEndpoint("B") {
 		t.Fail()
